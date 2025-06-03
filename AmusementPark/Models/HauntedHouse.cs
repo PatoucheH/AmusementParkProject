@@ -13,7 +13,8 @@ namespace AmusementPark.Models
         public override string? Emoji { get; init; } = ":ghost:";
         public override string? Type { get; init; } = "Thrill";
         public Position? Ordinal { get; set; }
-
+        public override double MaintenancePrice { get; init; } = 250;
+        public override string? Description { get; init; } = "The best ghost in this world is hide in this hous let's find him !";
         public HauntedHouse(string name)
         {
             Name = name;

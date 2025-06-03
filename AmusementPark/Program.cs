@@ -31,20 +31,32 @@ namespace AmusementPark
             { 
                 while (true)
                 {
+                    double maintenanceTotal = 0d;
+                    foreach (var building in YourPark.PlacedBuilding)
+                    {
+                        maintenanceTotal += building.MaintenancePrice;
+                    }
+
                     visitors = EarnMoney.CalculateNumberVisitor();
                     double moneyEarned = EarnMoney.EarnMoneyByVisitorEntry(visitors, YourPark);
                     YourPark.Budget += moneyEarned;
-                    if(moneyEarned > 0) AnsiConsole.MarkupLine($"[green]You just earned {moneyEarned}[/] euros" +
+                    YourPark.Budget -= maintenanceTotal;
+
+                    if(moneyEarned > 0) AnsiConsole.MarkupLine($"[green]You just earned {moneyEarned} [/]and [red] lose {maintenanceTotal} [/] " +
                         $"\n Your budget is now : {YourPark.Budget}");
 
-                    await Task.Delay(30_000); 
+                    await Task.Delay(5_000); 
                 }
             });
             
 
             while (choice != "7")
             {
-                if (YourPark.Budget < -5000) AnsiConsole.MarkupLine($"[red]YOU LOSE ASSHOLE !!! [/]");
+                if (YourPark.Budget < -5000)
+                {
+                    AnsiConsole.Write(new FigletText($"YOU LOSE ASSHOLE !!! ").Centered().Color(Color.Red));
+                    return;
+                }
                 switch (choice)
                 {
                     case "1":

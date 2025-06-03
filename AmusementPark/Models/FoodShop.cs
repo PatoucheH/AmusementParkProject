@@ -12,7 +12,8 @@ namespace AmusementPark.Models
         public override double Price { get; init; } = 10_000;
         public override string? Emoji { get; init; } = ":hot_dog:";
         public Position? Ordinal { get; set; }
-
+        public override double MaintenancePrice {get; init;} = 100;
+        public override string? Description { get; init; } = "Some food if you're hungry not angry.";
         public FoodShop(string name)
         {
             Name = name;

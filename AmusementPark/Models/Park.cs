@@ -33,7 +33,7 @@ namespace AmusementPark.Models
             var table = new Table().Centered();
             table.Border = TableBorder.Rounded;
             table.ShowRowSeparators();
-
+            int timeBewteenSpawn = 0;
             AnsiConsole.Write(new Rule("[teal] YOUR PARK [/]"));
             AnsiConsole.Live(table)
                 .AutoClear(false)
@@ -49,19 +49,19 @@ namespace AmusementPark.Models
                     table.AddColumn("5");
                     table.AddRow("1", GridPark[0, 0], GridPark[0, 1], GridPark[0, 2], GridPark[0, 3], GridPark[0, 4]);
                     ctx.Refresh();
-                    Thread.Sleep(500);
+                    Thread.Sleep(timeBewteenSpawn);
                     table.AddRow("2", GridPark[1, 0], GridPark[1, 1], GridPark[1, 2], GridPark[1, 3], GridPark[1, 4]);
                     ctx.Refresh();
-                    Thread.Sleep(500);
+                    Thread.Sleep(timeBewteenSpawn);
                     table.AddRow("3", GridPark[2, 0], GridPark[2, 1], GridPark[2, 2], GridPark[2, 3], GridPark[2, 4]);
                     ctx.Refresh();
-                    Thread.Sleep(500);
+                    Thread.Sleep(timeBewteenSpawn);
                     table.AddRow("4", GridPark[3, 0], GridPark[3, 1], GridPark[3, 2], GridPark[3, 3], GridPark[3, 4]);
                     ctx.Refresh();
-                    Thread.Sleep(500);
+                    Thread.Sleep(timeBewteenSpawn);
                     table.AddRow("5", GridPark[4, 0], GridPark[4, 1], GridPark[4, 2], GridPark[4, 3], GridPark[4, 4]);
                     ctx.Refresh();
-                    Thread.Sleep(500);
+                    Thread.Sleep(timeBewteenSpawn);
                 });
         }
 
@@ -71,6 +71,7 @@ namespace AmusementPark.Models
             foreach (var building in InventoryBuildings)
             {
                 AnsiConsole.MarkupLine($"[blue]{building.Name}[/]");
+                if(building.Description is not null) AnsiConsole.MarkupLine($"[yellow]{building.Description}[/]");
             }
         }
 

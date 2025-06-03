@@ -12,5 +12,8 @@ namespace AmusementPark.Models
         public double Price {get; init; }
         public string? Emoji { get; init; }
         public Position Ordinal { get; set; }
+        public double MaintenancePrice { get; init; }
+
+        public string? Description { get; init; }
     }
 }

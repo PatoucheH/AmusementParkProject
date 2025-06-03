@@ -13,6 +13,8 @@ namespace AmusementPark.Models
         public override string? Emoji { get; init; } = ":roller_coaster:";
         public override string? Type { get; init; } = "Thrill";
         public Position? Ordinal { get; set; }
+        public override double MaintenancePrice { get; init; } = 500;
+        public override string? Description { get; init; } = "I don't know what to say about this attractions ..... Try it !!";
 
         public RollerCoaster(string name)
         {

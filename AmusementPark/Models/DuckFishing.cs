@@ -13,7 +13,8 @@ namespace AmusementPark.Models
         public override string? Emoji { get; init; } = ":duck:";
         public override string? Type { get; init; } = "Child";
         public Position? Ordinal { get; set; }
-
+        public override double MaintenancePrice { get; init;} = 100;
+        public override string? Description { get; init; } = "The best attractions CATCH the little ducks !!!";
         public DuckFishing(string name)
         {
             Name = name;

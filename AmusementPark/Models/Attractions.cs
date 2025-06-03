@@ -13,6 +13,7 @@ namespace AmusementPark.Models
         public virtual string? Emoji { get; init; }
         public virtual string? Type { get; init; }
         public virtual Position Ordinal { get; set; }
-        
+        public virtual double MaintenancePrice { get; init; }
+        public virtual string? Description { get; init; }
     }
 }

@@ -9,7 +9,7 @@ namespace AmusementPark.Models
     public class GiftShop : Shops
     {
         public override string Name { get; set; }
-        public override double? Price { get; init; } = 25_000;
+        public override double Price { get; init; } = 25_000;
         public override string? Emoji { get; init; } = ":wrapped_gift:";
         public Position? Ordinal { get; set; }
 

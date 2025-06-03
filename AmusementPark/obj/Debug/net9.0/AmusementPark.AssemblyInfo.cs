@@ -14,7 +14,11 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AmusementPark")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+772d5bbca24e400b73745e64f30caf149ceb45fe")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4ee4c30847c3ee3368a5b954d3670b9206835689")]
+>>>>>>> patou
 [assembly: System.Reflection.AssemblyProductAttribute("AmusementPark")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AmusementPark")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

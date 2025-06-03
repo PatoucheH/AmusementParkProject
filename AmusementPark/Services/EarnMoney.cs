@@ -14,9 +14,6 @@ namespace AmusementPark.Services
             return numberVisitor * 25d * (park.PlacedBuilding.Count);
         }
 
-        public static int CalculateNumberVisitor()
-        {
-            return new Random().Next(251);
-        }
+        
     }
 }

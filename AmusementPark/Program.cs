@@ -5,6 +5,7 @@ using AmusementPark.Models;
 using AmusementPark.Utils;
 using Spectre.Console;
 using System.Threading.Tasks;
+using Spectre.Console.Extensions;
 
 namespace AmusementPark
 {
@@ -23,28 +24,49 @@ namespace AmusementPark
                 _ => ValidationResult.Success(),
             }));
             Park YourPark = new Park(Name);
+            Console.Clear();
             AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
 
             string choice = Menu.DisplayMenu().Substring(0,1);
-            int visitors = 0;
+            int visitorsEntry = 0;
+            int visitorsOut = 0;
+
             _ = Task.Run(async () =>
-            { 
-                while (true)
+            {
+            while (true)
+            {
+                double maintenanceTotal = 0d;
+                foreach (var building in YourPark.PlacedBuilding)
                 {
-                    double maintenanceTotal = 0d;
-                    foreach (var building in YourPark.PlacedBuilding)
-                    {
-                        maintenanceTotal += building.MaintenancePrice;
+                    maintenanceTotal += building.MaintenancePrice;
+                }
+
+                visitorsEntry = Visitors.CalculateNumberVisitorEntry();
+                visitorsOut = Visitors.CalculateNumberVisitorOut(visitorsEntry);
+                double moneyEarned = EarnMoney.EarnMoneyByVisitorEntry(visitorsEntry, YourPark);
+                YourPark.Budget += moneyEarned;
+                YourPark.Budget -= maintenanceTotal;
+
+                if (moneyEarned > 0)
+                {
+                    var panel = new Align(new BarChart()
+                        .Width(50)
+                        .Label("[darkgreen bold underline] YOUR MONEY [/]")
+                        .CenterLabel()
+                        .AddItem("Budget", YourPark.Budget, Color.Yellow)
+                        .AddItem("Money Earn", moneyEarned, Color.Green)
+                        .AddItem("Maintenance price", maintenanceTotal, Color.Red),
+                        HorizontalAlignment.Right,
+                        VerticalAlignment.Bottom);
+
+                        AnsiConsole.Live(panel)
+                        .AutoClear(false)
+                        .Start(ctx => {
+                            ctx.Refresh();
+                            Thread.Sleep(5_050);
+                            ctx.UpdateTarget(panel);
+                            });
                     }
-
-                    visitors = EarnMoney.CalculateNumberVisitor();
-                    double moneyEarned = EarnMoney.EarnMoneyByVisitorEntry(visitors, YourPark);
-                    YourPark.Budget += moneyEarned;
-                    YourPark.Budget -= maintenanceTotal;
-
-                    if(moneyEarned > 0) AnsiConsole.MarkupLine($"[green]You just earned {moneyEarned} [/]and [red] lose {maintenanceTotal} [/] " +
-                        $"\n Your budget is now : {YourPark.Budget}");
-
                     await Task.Delay(5_000); 
                 }
             });
@@ -52,6 +74,8 @@ namespace AmusementPark
 
             while (choice != "7")
             {
+                Console.Clear();
+                AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
                 if (YourPark.Budget < -5000)
                 {
                     AnsiConsole.Write(new FigletText($"YOU LOSE ASSHOLE !!! ").Centered().Color(Color.Red));

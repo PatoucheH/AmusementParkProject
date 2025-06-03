@@ -1125,23 +1125,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\hugop\\.nuget\\packages\\": {},
+    "C:\\Users\\msel2\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\code\\becode\\project\\AmusementParkProject\\Test_AmusementPark\\Test_AmusementPark.csproj",
+      "projectUniqueName": "C:\\Users\\msel2\\Source\\Repos\\AmusementParkProject\\Test_AmusementPark\\Test_AmusementPark.csproj",
       "projectName": "Test_AmusementPark",
-      "projectPath": "C:\\code\\becode\\project\\AmusementParkProject\\Test_AmusementPark\\Test_AmusementPark.csproj",
-      "packagesPath": "C:\\Users\\hugop\\.nuget\\packages\\",
-      "outputPath": "C:\\code\\becode\\project\\AmusementParkProject\\Test_AmusementPark\\obj\\",
+      "projectPath": "C:\\Users\\msel2\\Source\\Repos\\AmusementParkProject\\Test_AmusementPark\\Test_AmusementPark.csproj",
+      "packagesPath": "C:\\Users\\msel2\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\msel2\\Source\\Repos\\AmusementParkProject\\Test_AmusementPark\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\hugop\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\msel2\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -1157,8 +1157,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\code\\becode\\project\\AmusementParkProject\\AmusementPark\\AmusementPark.csproj": {
-              "projectPath": "C:\\code\\becode\\project\\AmusementParkProject\\AmusementPark\\AmusementPark.csproj"
+            "C:\\Users\\msel2\\Source\\Repos\\AmusementParkProject\\AmusementPark\\AmusementPark.csproj": {
+              "projectPath": "C:\\Users\\msel2\\Source\\Repos\\AmusementParkProject\\AmusementPark\\AmusementPark.csproj"
             }
           }
         }
@@ -1173,7 +1173,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net9.0": {
@@ -1212,7 +1212,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

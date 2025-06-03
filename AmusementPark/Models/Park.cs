@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Models
 {
-    internal class Park
+    public class Park
     {
         public string ParkName { get; set; }
         List<IBuilding> InventoryBuildings { get; set; } = new();

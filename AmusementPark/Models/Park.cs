@@ -95,7 +95,10 @@ namespace AmusementPark.Models
         {
             DisplayInventory();
             string chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [green]place[/] in your park : "));
-
+            while(!InventoryBuildings.Any(build => build.Name == chooseName))
+            {
+                chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [green]place[/] in your park : "));
+            }
             IBuilding chooseBuilding = InventoryBuildings.FirstOrDefault(b => b.Name == chooseName);
 
             var x = AnsiConsole.Prompt(new TextPrompt<int>("Choose the X value for your building : ")

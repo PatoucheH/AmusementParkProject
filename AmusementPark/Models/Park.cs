@@ -13,7 +13,7 @@ namespace AmusementPark.Models
         public string ParkName { get; set; }
         public double Budget { get; set; } = 50_000;
         List<IBuilding> InventoryBuildings { get; set; } = new();
-        List<IBuilding> PlacedBuilding { get; set; } = new();
+        public List<IBuilding> PlacedBuilding { get; set; } = new();
         string[,] GridPark { get; set; } =
         {
             {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
@@ -153,7 +153,7 @@ namespace AmusementPark.Models
             AnsiConsole.MarkupLine("[blue] Your building place : [/]");
             foreach (var building in PlacedBuilding)
             {
-                AnsiConsole.MarkupLine($"building.Name");
+                AnsiConsole.MarkupLine($"{building.Name}");
             }
             string chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [red]remove[/] in your park : "));
 

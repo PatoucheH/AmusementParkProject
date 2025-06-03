@@ -9,7 +9,7 @@ namespace AmusementPark.Models
     public class FoodShop :Shops
     {
         public override string Name { get; set; }
-        public override double? Price { get; init; } = 10_000;
+        public override double Price { get; init; } = 10_000;
         public override string? Emoji { get; init; } = ":hot_dog:";
         public Position? Ordinal { get; set; }
 

@@ -9,7 +9,7 @@ namespace AmusementPark.Models
     public interface IBuilding
     {
         public string Name { get; set; }
-        public double? Price {get; init; }
+        public double Price {get; init; }
         public string? Emoji { get; init; }
         public Position Ordinal { get; set; }
     }

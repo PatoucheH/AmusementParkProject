@@ -11,8 +11,9 @@ namespace AmusementPark.Models
     public class Park
     {
         public string ParkName { get; set; }
+        public double Budget { get; set; } = 50_000;
         List<IBuilding> InventoryBuildings { get; set; } = new();
-        List<IBuilding> PlacedBuilding { get; set; } = new();
+        public List<IBuilding> PlacedBuilding { get; set; } = new();
         string[,] GridPark { get; set; } =
         {
             {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
@@ -29,24 +30,39 @@ namespace AmusementPark.Models
 
         public void DisplayPark()
         {
-            var table = new Table();
+            var table = new Table().Centered();
             table.Border = TableBorder.Rounded;
             table.ShowRowSeparators();
 
-            table.AddColumn("Y/X");
-            table.AddColumn("1");
-            table.AddColumn("2");
-            table.AddColumn("3");
-            table.AddColumn("4");
-            table.AddColumn("5");
-
-            table.AddRow("1", GridPark[0, 0], GridPark[0, 1], GridPark[0, 2], GridPark[0, 3], GridPark[0, 4]);
-            table.AddRow("2", GridPark[1, 0], GridPark[1, 1], GridPark[1, 2], GridPark[1, 3], GridPark[1, 4]);
-            table.AddRow("3", GridPark[2, 0], GridPark[2, 1], GridPark[2, 2], GridPark[2, 3], GridPark[2, 4]);
-            table.AddRow("4", GridPark[3, 0], GridPark[3, 1], GridPark[3, 2], GridPark[3, 3], GridPark[3, 4]);
-            table.AddRow("5", GridPark[4, 0], GridPark[4, 1], GridPark[4, 2], GridPark[4, 3], GridPark[4, 4]);
-
-            AnsiConsole.Write(table);
+            AnsiConsole.Write(new Rule("[teal] YOUR PARK [/]"));
+            AnsiConsole.Live(table)
+                .AutoClear(false)
+                .Overflow(VerticalOverflow.Ellipsis)
+                .Cropping(VerticalOverflowCropping.Top)
+                .Start(ctx =>
+                {
+                    table.AddColumn("Y/X");
+                    table.AddColumn("1");
+                    table.AddColumn("2");
+                    table.AddColumn("3");
+                    table.AddColumn("4");
+                    table.AddColumn("5");
+                    table.AddRow("1", GridPark[0, 0], GridPark[0, 1], GridPark[0, 2], GridPark[0, 3], GridPark[0, 4]);
+                    ctx.Refresh();
+                    Thread.Sleep(500);
+                    table.AddRow("2", GridPark[1, 0], GridPark[1, 1], GridPark[1, 2], GridPark[1, 3], GridPark[1, 4]);
+                    ctx.Refresh();
+                    Thread.Sleep(500);
+                    table.AddRow("3", GridPark[2, 0], GridPark[2, 1], GridPark[2, 2], GridPark[2, 3], GridPark[2, 4]);
+                    ctx.Refresh();
+                    Thread.Sleep(500);
+                    table.AddRow("4", GridPark[3, 0], GridPark[3, 1], GridPark[3, 2], GridPark[3, 3], GridPark[3, 4]);
+                    ctx.Refresh();
+                    Thread.Sleep(500);
+                    table.AddRow("5", GridPark[4, 0], GridPark[4, 1], GridPark[4, 2], GridPark[4, 3], GridPark[4, 4]);
+                    ctx.Refresh();
+                    Thread.Sleep(500);
+                });
         }
 
         public void DisplayInventory()
@@ -85,8 +101,8 @@ namespace AmusementPark.Models
                 };
 
                 InventoryBuildings.Add(buildingBuy);
-
-                AnsiConsole.MarkupLine($"[green]You successfully bought and add your new {buildingBuy.Name} to your inventory[/]");
+                Budget -= (double)buildingBuy.Price;
+                AnsiConsole.MarkupLine($"[green]You successfully bought and add your new {buildingBuy.Name} to your inventory[/]\n Your budget : {Budget}");
             }
         }
 
@@ -95,7 +111,10 @@ namespace AmusementPark.Models
         {
             DisplayInventory();
             string chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [green]place[/] in your park : "));
-
+            while(!InventoryBuildings.Any(build => build.Name == chooseName))
+            {
+                chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [green]place[/] in your park : "));
+            }
             IBuilding chooseBuilding = InventoryBuildings.FirstOrDefault(b => b.Name == chooseName);
 
             var x = AnsiConsole.Prompt(new TextPrompt<int>("Choose the X value for your building : ")
@@ -134,7 +153,7 @@ namespace AmusementPark.Models
             AnsiConsole.MarkupLine("[blue] Your building place : [/]");
             foreach (var building in PlacedBuilding)
             {
-                AnsiConsole.MarkupLine($"building.Name");
+                AnsiConsole.MarkupLine($"{building.Name}");
             }
             string chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [red]remove[/] in your park : "));
 

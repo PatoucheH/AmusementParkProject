@@ -1,15 +1,16 @@
 ﻿
 
-
+using AmusementPark.Services;
 using AmusementPark.Models;
 using AmusementPark.Utils;
 using Spectre.Console;
+using System.Threading.Tasks;
 
 namespace AmusementPark
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -25,8 +26,25 @@ namespace AmusementPark
             AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
 
             string choice = Menu.DisplayMenu().Substring(0,1);
+            int visitors = 0;
+            _ = Task.Run(async () =>
+            { 
+                while (true)
+                {
+                    visitors = EarnMoney.CalculateNumberVisitor();
+                    double moneyEarned = EarnMoney.EarnMoneyByVisitorEntry(visitors, YourPark);
+                    YourPark.Budget += moneyEarned;
+                    if(moneyEarned > 0) AnsiConsole.MarkupLine($"[green]You just earned {moneyEarned}[/] euros" +
+                        $"\n Your budget is now : {YourPark.Budget}");
+
+                    await Task.Delay(30_000); 
+                }
+            });
+            
+
             while (choice != "7")
             {
+                if (YourPark.Budget < -5000) AnsiConsole.MarkupLine($"[red]YOU LOSE ASSHOLE !!! [/]");
                 switch (choice)
                 {
                     case "1":
@@ -54,6 +72,8 @@ namespace AmusementPark
 
                 choice = Menu.DisplayMenu().Substring(0, 1);
             }
+
+            
         }
     }
 }

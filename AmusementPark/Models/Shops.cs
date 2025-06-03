@@ -9,7 +9,7 @@ namespace AmusementPark.Models
     public class Shops : IBuilding
     {
         public virtual string Name { get; set; }
-        public virtual double? Price { get; init; }
+        public virtual double Price { get; init; }
         public virtual string? Emoji { get; init; }
         public virtual Position Ordinal { get; set; }
     }

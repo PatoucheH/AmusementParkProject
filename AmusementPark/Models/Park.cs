@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using AmusementPark.Services;
 
 
 namespace AmusementPark.Models
@@ -15,14 +16,14 @@ namespace AmusementPark.Models
     /// </summary>
     public class Park
     {
-        public string ParkName { get; set; }
+        public string Name { get; set; }
         public double Budget { get; set; } = 50_000;
         public int VisitorsEntry {  get; set; }
         public int VisitorsOut {  get; set; }
         public int TotalVisitors {get; set ;}
         public List<IBuilding> InventoryBuildings { get; set; } = new();
         public List<IBuilding> PlacedBuilding { get; set; } = new();
-        string[,] GridPark { get; set; } =
+        public string[,] GridPark { get; set; } =
         {
             {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
             {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
@@ -45,13 +46,13 @@ namespace AmusementPark.Models
         {
             WriteIndented = false,
             PropertyNameCaseInsensitive = true,
-            Converters = { new BuildingJsonConverter() } // nécessaire pour désérialiser IBuilding
+            Converters = { new BuildingJsonConverter() } 
         };
 
         //Constructor
         public Park(string name)
         {
-            ParkName = name;
+            Name = name;
         }
 
         /// <summary>
@@ -65,10 +66,7 @@ namespace AmusementPark.Models
         /// <returns>A <see cref="Grid"/> object containing the park's layout, visitor statistics, and budget information.</returns>
          public Grid DisplayPark()
         {
-            var grid = new Grid();
-            grid.AddColumn();
             var rule = new Rule("[teal]YOUR PARK[/]");
-
             var table = new Table();
             table.Border = TableBorder.Rounded;
             table.ShowRowSeparators();
@@ -78,7 +76,6 @@ namespace AmusementPark.Models
             table.AddColumn("3");
             table.AddColumn("4");
             table.AddColumn("5");
-
             for (int i = 0; i < 5; i++)
             {
                 var row = new List<string> { (i + 1).ToString() };
@@ -95,6 +92,8 @@ namespace AmusementPark.Models
                 .AddItem("Visitors in the park", VisitorsEntry - VisitorsOut, Color.Teal)
                 .AddItem("Total visitors", TotalVisitors, Color.Lime);
 
+            var grid = new Grid();
+            grid.AddColumn();
             grid.AddRow(rule);
             grid.AddRow(table);
             grid.AddEmptyRow();
@@ -113,143 +112,103 @@ namespace AmusementPark.Models
             AnsiConsole.MarkupLine("[navy]Your inventory : [/]");
             foreach (var building in InventoryBuildings)
             {
-                AnsiConsole.MarkupLine($"[blue]{building.Name}[/]");
-                if(building.Description is not null) AnsiConsole.MarkupLine($"[dodgerblue1]{building.Description}[/]");
+                AnsiConsole.MarkupLine($"[blue]- {building.Name}[/]");
+                if(building.Description is not null) AnsiConsole.MarkupLine($"Desc : [dodgerblue1]{building.Description}[/]");
             }
         }
 
         /// <summary>
-        /// Allows the user to purchase one or more buildings for their park by selecting from a predefined list of
-        /// building types.
+        /// Purchases a collection of buildings and adds them to the inventory.
         /// </summary>
-        /// <remarks>This method prompts the user to choose building types from a list and specify names
-        /// for the buildings. The selected buildings are added to the park's inventory, and their prices are deducted
-        /// from the budget. If an invalid building type is selected, an exception is thrown.</remarks>
-        /// <exception cref="Exception">Thrown if an unknown building type is selected.</exception>
-        public void BuySomeBuilding()
+        /// <remarks>Each building is instantiated based on its type and name, added to the inventory, and
+        /// its price  is deducted from the budget. If an unknown building type is provided, an exception is
+        /// thrown.</remarks>
+        /// <param name="buildings">A list of tuples where each tuple contains the type and name of a building to purchase. The type must be one
+        /// of the predefined building types, such as "RollerCoaster", "HauntedHouse",  "GiftShop", "FoodShop", or
+        /// "DuckFishing".</param>
+        /// <exception cref="Exception">Thrown if a building type in the <paramref name="buildings"/> list is not recognized.</exception>
+        public void BuyBuilding(List<(string, string)> buildings)
         {
-            List<string> buildingChoose = AnsiConsole.Prompt(new MultiSelectionPrompt<string>()
-                .Title("Choose the type of building you want to buy :")
-                .AddChoices(new[]
-                {
-                    "RollerCoaster",
-                    "HauntedHouse",
-                    "GiftShop",
-                    "FoodShop",
-                    "DuckFishing"
-                }));
-
-            foreach (var building in buildingChoose)
+            foreach (var (type, name) in buildings)
             {
-                string chooseName = string.Empty;
-
-                while (string.IsNullOrEmpty(chooseName))
+                IBuilding buildingBuy = type switch
                 {
-                    chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you [green]bought[/] for your park : "));
-                }
-                IBuilding buildingBuy = building switch
-                {
-                    "RollerCoaster" => new RollerCoaster(chooseName),
-                    "HauntedHouse" => new HauntedHouse(chooseName),
-                    "GiftShop" => new GiftShop(chooseName),
-                    "FoodShop" => new FoodShop(chooseName),
-                    "DuckFishing" => new DuckFishing(chooseName),
+                    "RollerCoaster" => new RollerCoaster(name),
+                    "HauntedHouse" => new HauntedHouse(name),
+                    "GiftShop" => new GiftShop(name),
+                    "FoodShop" => new FoodShop(name),
+                    "DuckFishing" => new DuckFishing(name),
                     _ => throw new Exception("Unknown Type")
                 };
 
                 InventoryBuildings.Add(buildingBuy);
                 Budget -= (double)buildingBuy.Price;
-                AnsiConsole.MarkupLine($"[green]You successfully bought and add your new {buildingBuy.Name} to your inventory[/]\n Your budget : {Budget}");
             }
         }
 
-
         /// <summary>
-        /// Places a building from the inventory onto the park grid.
+        /// Attempts to place a building at the specified coordinates within the grid.
         /// </summary>
-        /// <remarks>This method allows the user to select a building from their inventory and place it at
-        /// a specified position on the park grid. The position must be unoccupied for the placement to succeed. If the
-        /// inventory is empty, the method will notify the user and terminate. If the selected position is already
-        /// occupied, the user will be prompted to either retry or cancel the operation.</remarks>
-        public void PlaceSomeBuilding()
+        /// <remarks>This method checks whether the specified building exists in the inventory and whether
+        /// the target cell in the grid is unoccupied. If the operation succeeds, the building is removed from the
+        /// inventory, placed in the grid, and added to the list of placed buildings. If the operation fails, the
+        /// <paramref name="message"/> parameter provides details about the failure.</remarks>
+        /// <param name="name">The name of the building to place. Must match the name of a building in the inventory.</param>
+        /// <param name="x">The X-coordinate of the target cell in the grid. Must be a valid grid position.</param>
+        /// <param name="y">The Y-coordinate of the target cell in the grid. Must be a valid grid position.</param>
+        /// <param name="message">An output parameter that contains a message describing the result of the operation.</param>
+        /// <returns><see langword="true"/> if the building was successfully placed; otherwise, <see langword="false"/>.</returns>
+        public bool TryPlaceBuilding(string name, int x, int y, out string message)
         {
-            if (InventoryBuildings.Count <= 0 )
+            message = string.Empty;
+            var building = InventoryBuildings.FirstOrDefault(b => b.Name == name);
+            if (building == null)
             {
-                AnsiConsole.MarkupLine("[red]Your inventory is empty please buy some buildings before ![/]");
-                return;
+                message = $"Building with name {name} not found.";
+                return false;
             }
-            DisplayInventory();
-            string chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [green]place[/] in your park : "));
-            while(!InventoryBuildings.Any(build => build.Name == chooseName))
+            Position point = new(x - 1, y - 1);
+            if (GridPark[point.X, point.Y] != ":green_square:")
             {
-                chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [green]place[/] in your park : "));
+                message = $"The cell ({x},{y}) is already occupied.";
+                return false;
             }
-            IBuilding chooseBuilding = InventoryBuildings.FirstOrDefault(b => b.Name == chooseName);
 
-            var x = AnsiConsole.Prompt(new TextPrompt<int>("Choose the X value for your building : ")
-                .AddChoices(new[] { 1, 2, 3, 4, 5 }));
-            var y = AnsiConsole.Prompt(new TextPrompt<int>("Choose the Y value for your building : ")
-                .AddChoices(new[] {1, 2, 3, 4, 5 }));
-
-            Position Point = new(x - 1, y - 1);
-            if (GridPark[Point.X, Point.Y] == ":green_square:")
-            {
-                chooseBuilding.Ordinal = Point;
-
-                GridPark[chooseBuilding.Ordinal.X, chooseBuilding.Ordinal.Y] = chooseBuilding.Emoji;
-                InventoryBuildings.Remove(chooseBuilding);
-                PlacedBuilding.Add(chooseBuilding);
-                AnsiConsole.MarkupLine($"[green]You successfully placed your {chooseBuilding.Name}[/]");
-            }
-            else
-            {
-                AnsiConsole.MarkupLine($"[red]You cannot placed your {chooseBuilding.Name} in this place, there is already something [/]");
-                var confirmation = AnsiConsole.Prompt(new TextPrompt<bool>("Would you continue ? ")
-                        .AddChoice(true)
-                        .AddChoice(false)
-                        .DefaultValue(true)
-                        .WithConverter(choice => choice ? "y" : "n"));
-                if (confirmation) PlaceSomeBuilding();
-                else return;
-
-            }
+            building.Ordinal = point;
+            GridPark[point.X, point.Y] = building.Emoji;
+            InventoryBuildings.Remove(building);
+            PlacedBuilding.Add(building);
+            message = $"Successfully placed {building.Name} at ({x},{y})";
+            return true;
         }
 
-
         /// <summary>
-        /// Removes a building from the park based on the user's input.
+        /// Attempts to remove a building with the specified name from the park.
         /// </summary>
-        /// <remarks>This method prompts the user to select a building to remove from the park. If the
-        /// park is empty,  a message is displayed, and the method exits. The user is presented with a list of placed
-        /// buildings  and must enter the name of the building to remove. Once a valid building name is provided, the
-        /// building  is removed from the park grid, added back to the inventory, and a confirmation message is
-        /// displayed.</remarks>
-        public void RemoveSomeBuilding()
+        /// <remarks>This method updates the park's grid to reflect the removal of the building and moves
+        /// the building to the inventory. If the building is not found, no changes are made to the park or
+        /// inventory.</remarks>
+        /// <param name="name">The name of the building to remove. Cannot be null or empty.</param>
+        /// <param name="message">An output parameter that contains a message describing the result of the operation. If the building is
+        /// successfully removed, the message will indicate success. If the building is not found, the message will
+        /// indicate the failure reason.</param>
+        /// <returns><see langword="true"/> if the building was successfully removed; otherwise, <see langword="false"/>.</returns>
+        public bool TryRemoveBuilding(string name, out string message)
         {
-            if(PlacedBuilding.Count <= 0)
+            message = string.Empty;
+            var building = PlacedBuilding.FirstOrDefault(b => b.Name == name);
+            if (building == null)
             {
-                AnsiConsole.MarkupLine("[red]Your parc is empty please place some buildings before ! [/]");
-                return;
+                message = $"Building {name} not found in placed buildings.";
+                return false;
             }
-            AnsiConsole.MarkupLine("[blue] Your building place : [/]");
-            foreach (var building in PlacedBuilding)
-            {
-                AnsiConsole.MarkupLine($"{building.Name}");
-            }
-            string chooseName = string.Empty;
-
-            while(!PlacedBuilding.Any(b => b.Name == chooseName) || string.IsNullOrEmpty(chooseName))
-            {
-                chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [red]remove[/] in your park : "));
-            }
-
-            IBuilding chooseBuilding = PlacedBuilding.FirstOrDefault(b => b.Name == chooseName);
-            Position point = chooseBuilding.Ordinal;
+            Position point = building.Ordinal;
 
             GridPark[point.X, point.Y] = ":green_square:";
-            InventoryBuildings.Add(chooseBuilding);
-            PlacedBuilding.Remove(chooseBuilding);
-            AnsiConsole.MarkupLine($"[green]You successfully removed {chooseBuilding.Name} from your park[/]");
+            PlacedBuilding.Remove(building);
+            InventoryBuildings.Add(building);
+            message = $"Successfully removed {name} from the park.";
+            return true;
         }
     }
 }

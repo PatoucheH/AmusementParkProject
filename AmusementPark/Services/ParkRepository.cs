@@ -49,7 +49,7 @@ public class ParkRepository
                 PlacedBuildingJson = excluded.PlacedBuildingJson;
         ";
 
-        cmd.Parameters.AddWithValue("$name", park.ParkName);
+        cmd.Parameters.AddWithValue("$name", park.Name);
         cmd.Parameters.AddWithValue("$budget", park.Budget);
         cmd.Parameters.AddWithValue("$visitorsEntry", park.VisitorsEntry);
         cmd.Parameters.AddWithValue("$visitorsOut", park.VisitorsOut);

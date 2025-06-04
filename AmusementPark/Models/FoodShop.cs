@@ -14,6 +14,7 @@ namespace AmusementPark.Models
         public Position? Ordinal { get; set; }
         public override double MaintenancePrice {get; init;} = 100;
         public override string? Description { get; init; } = "Some food if you're hungry not angry.";
+        
         public FoodShop(string name)
         {
             Name = name;

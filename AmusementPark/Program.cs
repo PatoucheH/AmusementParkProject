@@ -5,6 +5,7 @@ using AmusementPark.Models;
 using AmusementPark.Utils;
 using Spectre.Console;
 using System.Threading.Tasks;
+using Spectre.Console.Extensions;
 
 namespace AmusementPark
 {
@@ -23,35 +24,29 @@ namespace AmusementPark
                 _ => ValidationResult.Success(),
             }));
             Park YourPark = new Park(Name);
+
+            Console.Clear();
             AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
-
+            YourPark.DisplayPark();
+            EarnMoney.GenerateMoney(YourPark);
             string choice = Menu.DisplayMenu().Substring(0,1);
-            int visitors = 0;
-            _ = Task.Run(async () =>
-            { 
-                while (true)
-                {
-                    double maintenanceTotal = 0d;
-                    foreach (var building in YourPark.PlacedBuilding)
-                    {
-                        maintenanceTotal += building.MaintenancePrice;
-                    }
 
-                    visitors = EarnMoney.CalculateNumberVisitor();
-                    double moneyEarned = EarnMoney.EarnMoneyByVisitorEntry(visitors, YourPark);
-                    YourPark.Budget += moneyEarned;
-                    YourPark.Budget -= maintenanceTotal;
-
-                    if(moneyEarned > 0) AnsiConsole.MarkupLine($"[green]You just earned {moneyEarned} [/]and [red] lose {maintenanceTotal} [/] " +
-                        $"\n Your budget is now : {YourPark.Budget}");
-
-                    await Task.Delay(5_000); 
-                }
-            });
             
 
-            while (choice != "7")
+
+            while (choice != "5")
             {
+
+                Console.Clear();
+                AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
+                YourPark.DisplayPark();
+                lock (EarnMoney.GetLock())
+                {
+                    AnsiConsole.MarkupLine($"[green]Budget actual : {YourPark.Budget}[/]");
+                    AnsiConsole.MarkupLine($"[blue]Visitors In the park : {YourPark.VisitorsEntry - YourPark.VisitorsOut}[/]");
+                }
+                
+
                 if (YourPark.Budget < -5000)
                 {
                     AnsiConsole.Write(new FigletText($"YOU LOSE ASSHOLE !!! ").Centered().Color(Color.Red));
@@ -60,21 +55,18 @@ namespace AmusementPark
                 switch (choice)
                 {
                     case "1":
-                        YourPark.DisplayPark();
-                        break;
-                    case "2":
                         YourPark.DisplayInventory();
                         break;
-                    case "3":
+                    case "2":
                         YourPark.PlaceSomeBuilding();
                         break;
-                    case "4":
+                    case "3":
                         YourPark.RemoveSomeBuilding();
                         break;
-                    case "5":
+                    case "4":
                         YourPark.BuySomeBuilding();
                         break;
-                    case "7":
+                    case "5":
                         AnsiConsole.Markup("[darkred]You exit the game. Thank you ![/]");
                         break;
                     default:

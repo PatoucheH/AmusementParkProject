@@ -15,12 +15,11 @@ namespace AmusementPark.Utils
                 .Title("[lime]What do you want to do in your park ?[/] ")
                 .AddChoices(new[]
                 {
-                    "1.Display All your park",
-                    "2.View your inventory",
-                    "3.Place anything on your park",
-                    "4.Remove a building from your park",
-                    "5.Buy some new building for your park",
-                    "7.Exit"
+                    "1.View your inventory",
+                    "2.Place anything on your park",
+                    "3.Remove a building from your park",
+                    "4.Buy some new building for your park",
+                    "5.Exit"
                 }));
         }
     }

@@ -9,11 +9,36 @@ namespace AmusementPark.Services
 {
     public class EarnMoney
     {
-        public static double EarnMoneyByVisitorEntry(int numberVisitor, Park park)
+        private static readonly object _lock = new();
+        public static double EarnMoneyByVisitorEntry(Park park)
         {
-            return numberVisitor * 25d * (park.PlacedBuilding.Count);
+            return park.VisitorsEntry * 25d * (park.PlacedBuilding.Count);
         }
 
-        
+        public static void GenerateMoney(Park park)
+        {
+            _ = Task.Run(async () =>
+                {
+                    while (true)
+                    {
+                        lock (_lock)
+                        {
+                            double maintenanceTotal = 0d;
+                            foreach (var building in park.PlacedBuilding)
+                                maintenanceTotal += building.MaintenancePrice;
+
+                            park.VisitorsEntry = Visitors.CalculateNumberVisitorEntry();
+                            park.VisitorsOut = Visitors.CalculateNumberVisitorOut(park.VisitorsEntry);
+
+                            double moneyEarned = EarnMoney.EarnMoneyByVisitorEntry(park);
+                            park.Budget += moneyEarned;
+                            park.Budget -= maintenanceTotal;
+
+                        }
+                        await Task.Delay(5_000);
+                    }
+                });
+        }
+        public static object GetLock() => _lock;
     }
 }

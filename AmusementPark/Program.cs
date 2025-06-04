@@ -24,58 +24,24 @@ namespace AmusementPark
                 _ => ValidationResult.Success(),
             }));
             Park YourPark = new Park(Name);
+
             Console.Clear();
             AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
+            YourPark.DisplayPark();
 
             string choice = Menu.DisplayMenu().Substring(0,1);
-            int visitorsEntry = 0;
-            int visitorsOut = 0;
 
-            _ = Task.Run(async () =>
-            {
-            while (true)
-            {
-                double maintenanceTotal = 0d;
-                foreach (var building in YourPark.PlacedBuilding)
-                {
-                    maintenanceTotal += building.MaintenancePrice;
-                }
-
-                visitorsEntry = Visitors.CalculateNumberVisitorEntry();
-                visitorsOut = Visitors.CalculateNumberVisitorOut(visitorsEntry);
-                double moneyEarned = EarnMoney.EarnMoneyByVisitorEntry(visitorsEntry, YourPark);
-                YourPark.Budget += moneyEarned;
-                YourPark.Budget -= maintenanceTotal;
-
-                if (moneyEarned > 0)
-                {
-                    var panel = new Align(new BarChart()
-                        .Width(50)
-                        .Label("[darkgreen bold underline] YOUR MONEY [/]")
-                        .CenterLabel()
-                        .AddItem("Budget", YourPark.Budget, Color.Yellow)
-                        .AddItem("Money Earn", moneyEarned, Color.Green)
-                        .AddItem("Maintenance price", maintenanceTotal, Color.Red),
-                        HorizontalAlignment.Right,
-                        VerticalAlignment.Bottom);
-
-                        AnsiConsole.Live(panel)
-                        .AutoClear(false)
-                        .Start(ctx => {
-                            ctx.Refresh();
-                            Thread.Sleep(5_050);
-                            ctx.UpdateTarget(panel);
-                            });
-                    }
-                    await Task.Delay(5_000); 
-                }
-            });
             
+
 
             while (choice != "7")
             {
+
                 Console.Clear();
                 AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
+                YourPark.DisplayPark();
+                
+
                 if (YourPark.Budget < -5000)
                 {
                     AnsiConsole.Write(new FigletText($"YOU LOSE ASSHOLE !!! ").Centered().Color(Color.Red));
@@ -84,18 +50,15 @@ namespace AmusementPark
                 switch (choice)
                 {
                     case "1":
-                        YourPark.DisplayPark();
-                        break;
-                    case "2":
                         YourPark.DisplayInventory();
                         break;
-                    case "3":
+                    case "2":
                         YourPark.PlaceSomeBuilding();
                         break;
-                    case "4":
+                    case "3":
                         YourPark.RemoveSomeBuilding();
                         break;
-                    case "5":
+                    case "4":
                         YourPark.BuySomeBuilding();
                         break;
                     case "7":

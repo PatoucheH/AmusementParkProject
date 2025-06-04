@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Test_AmusementPark")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1f72a3d17f171d3677b4a42cf37aa4b1c6eb8cf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+41fb3edace1e0044c55d832097d9eef87e68b71a")]
 [assembly: System.Reflection.AssemblyProductAttribute("Test_AmusementPark")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Test_AmusementPark")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

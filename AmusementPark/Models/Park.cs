@@ -12,6 +12,9 @@ namespace AmusementPark.Models
     {
         public string ParkName { get; set; }
         public double Budget { get; set; } = 50_000;
+        public int VisitorsEntry {  get; set; }
+        public int VisitorsOut {  get; set; }
+        public int TotalVisitors {get; set ;}
         List<IBuilding> InventoryBuildings { get; set; } = new();
         public List<IBuilding> PlacedBuilding { get; set; } = new();
         string[,] GridPark { get; set; } =

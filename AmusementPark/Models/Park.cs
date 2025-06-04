@@ -58,11 +58,6 @@ namespace AmusementPark.Models
         /// <summary>
         /// Displays a visual representation of the park, including a grid layout, statistics, and a summary.
         /// </summary>
-        /// <remarks>The returned grid includes the following components: <list type="bullet"> <item>A
-        /// table representing the park's layout, with rows and columns labeled for easy navigation.</item> <item>A bar
-        /// chart displaying key statistics such as budget, current visitors, and total visitors.</item> <item>A title
-        /// rule indicating the park's name.</item> </list> This method is useful for generating a structured and
-        /// visually appealing overview of the park's state.</remarks>
         /// <returns>A <see cref="Grid"/> object containing the park's layout, visitor statistics, and budget information.</returns>
          public Grid DisplayPark()
         {
@@ -104,9 +99,6 @@ namespace AmusementPark.Models
         /// <summary>
         /// Displays the list of buildings in the inventory, including their names and descriptions.
         /// </summary>
-        /// <remarks>Each building in the inventory is displayed with its name in blue. If a building has
-        /// a description,  it is displayed in 	dodgerblue. This method outputs the inventory details to the console using
-        /// ANSI markup.</remarks>
         public void DisplayInventory()
         {
             AnsiConsole.MarkupLine("[navy]Your inventory : [/]");
@@ -120,9 +112,6 @@ namespace AmusementPark.Models
         /// <summary>
         /// Purchases a collection of buildings and adds them to the inventory.
         /// </summary>
-        /// <remarks>Each building is instantiated based on its type and name, added to the inventory, and
-        /// its price  is deducted from the budget. If an unknown building type is provided, an exception is
-        /// thrown.</remarks>
         /// <param name="buildings">A list of tuples where each tuple contains the type and name of a building to purchase. The type must be one
         /// of the predefined building types, such as "RollerCoaster", "HauntedHouse",  "GiftShop", "FoodShop", or
         /// "DuckFishing".</param>
@@ -149,10 +138,6 @@ namespace AmusementPark.Models
         /// <summary>
         /// Attempts to place a building at the specified coordinates within the grid.
         /// </summary>
-        /// <remarks>This method checks whether the specified building exists in the inventory and whether
-        /// the target cell in the grid is unoccupied. If the operation succeeds, the building is removed from the
-        /// inventory, placed in the grid, and added to the list of placed buildings. If the operation fails, the
-        /// <paramref name="message"/> parameter provides details about the failure.</remarks>
         /// <param name="name">The name of the building to place. Must match the name of a building in the inventory.</param>
         /// <param name="x">The X-coordinate of the target cell in the grid. Must be a valid grid position.</param>
         /// <param name="y">The Y-coordinate of the target cell in the grid. Must be a valid grid position.</param>
@@ -185,9 +170,6 @@ namespace AmusementPark.Models
         /// <summary>
         /// Attempts to remove a building with the specified name from the park.
         /// </summary>
-        /// <remarks>This method updates the park's grid to reflect the removal of the building and moves
-        /// the building to the inventory. If the building is not found, no changes are made to the park or
-        /// inventory.</remarks>
         /// <param name="name">The name of the building to remove. Cannot be null or empty.</param>
         /// <param name="message">An output parameter that contains a message describing the result of the operation. If the building is
         /// successfully removed, the message will indicate success. If the building is not found, the message will

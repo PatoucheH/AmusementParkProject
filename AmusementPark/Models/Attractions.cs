@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Models
 {
+    /// <summary>
+    /// Represents a base class for attractions within a building or facility.
+    /// </summary>
+    /// <remarks>This abstract class provides common properties for attractions, such as name, price, type,
+    /// and description. Derived classes can extend or override these properties to define specific types of
+    /// attractions.</remarks>
     public abstract class Attractions :IBuilding
     {
         public virtual string Name { get; set; }
@@ -13,6 +19,7 @@ namespace AmusementPark.Models
         public virtual string? Emoji { get; init; }
         public virtual string? Type { get; init; }
         public virtual Position Ordinal { get; set; }
-        
+        public virtual double MaintenancePrice { get; init; }
+        public virtual string? Description { get; init; }
     }
 }

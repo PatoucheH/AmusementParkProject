@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 
@@ -28,7 +30,24 @@ namespace AmusementPark.Models
             {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
             {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" }
         };
-        
+
+        // Serialisation for the BDD 
+        public string InventoryBuildingsJson => JsonSerializer.Serialize(InventoryBuildings, JsonOptions);
+        public string PlacedBuildingJson => JsonSerializer.Serialize(PlacedBuilding, JsonOptions);
+
+        public void LoadFromJson(string inventoryJson, string placedJson)
+        {
+            InventoryBuildings = JsonSerializer.Deserialize<List<IBuilding>>(inventoryJson, JsonOptions) ?? new List<IBuilding>();
+            PlacedBuilding = JsonSerializer.Deserialize<List<IBuilding>>(placedJson, JsonOptions) ?? new List<IBuilding>();
+        }
+
+        private static JsonSerializerOptions JsonOptions => new()
+        {
+            WriteIndented = false,
+            PropertyNameCaseInsensitive = true,
+            Converters = { new BuildingJsonConverter() } // nécessaire pour désérialiser IBuilding
+        };
+
         //Constructor
         public Park(string name)
         {

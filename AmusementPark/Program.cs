@@ -1,11 +1,12 @@
 ﻿
-using Microsoft.Data.Sqlite;
-using AmusementPark.Services;
 using AmusementPark.Models;
+using AmusementPark.Services;
 using AmusementPark.Utils;
+using Microsoft.Data.Sqlite;
 using Spectre.Console;
-using System.Threading.Tasks;
 using Spectre.Console.Extensions;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace AmusementPark
 {
@@ -19,22 +20,48 @@ namespace AmusementPark
             // Title to welcoming in our game
             AnsiConsole.Write(new FigletText("Welcome to our new manager roller coaster game !").Centered().Color(Color.Teal));
 
-            // Ask the user to choose his park's name
-            string Name = AnsiConsole.Prompt(new TextPrompt<string>("Choose the name of your park : ")
-                .Validate((name) => name.Length switch
-            {
-                < 2 => ValidationResult.Error("[red]Your park name is too low ! [/]"),
-                > 20 => ValidationResult.Error("[red]Your park name is too long ! [/]"),
-                _ => ValidationResult.Success(),
-            }));
-
             // create the park
-            Park YourPark = new Park(Name);
+            Park YourPark;
+
+            string newOrSaveGame = string.Empty;
+            while (newOrSaveGame is null || newOrSaveGame != "1" || newOrSaveGame != "2")
+            {
+                newOrSaveGame = Menu.NewOrSaveGame().Substring(0, 1);
+            }
+
+            if(newOrSaveGame == "1")
+            {
+                // Ask the user to choose his park's name
+                string Name = AnsiConsole.Prompt(new TextPrompt<string>("Choose the name of your park : ")
+                    .Validate((name) => name.Length switch
+                {
+                    < 2 => ValidationResult.Error("[red]Your park name is too low ! [/]"),
+                    > 20 => ValidationResult.Error("[red]Your park name is too long ! [/]"),
+                    _ => ValidationResult.Success(),
+                }));
+                YourPark = new Park(Name);
+            }
+            else if (newOrSaveGame == "2")
+            {
+                
+            }
+            else
+            {
+                // Ask the user to choose his park's name
+                string Name = AnsiConsole.Prompt(new TextPrompt<string>("Choose the name of your park : ")
+                    .Validate((name) => name.Length switch
+                    {
+                        < 2 => ValidationResult.Error("[red]Your park name is too low ! [/]"),
+                        > 20 => ValidationResult.Error("[red]Your park name is too long ! [/]"),
+                        _ => ValidationResult.Success(),
+                    }));
+                YourPark = new Park(Name);
+            }
 
             // Clear the console
             Console.Clear();
             // Display the user's park's name
-            AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
+            AnsiConsole.Write(new FigletText(YourPark.Name).Centered().Color(Color.Lime));
 
             // create var to stop the refresh when we are in a prompt
             bool inMenu = false;
@@ -92,6 +119,9 @@ namespace AmusementPark
                         inMenu = false;
                         break;
                     case "5":
+                        new ParkRepository("Data Source=park.db").SavePark(YourPark);
+                        break;
+                    case "6":
                         AnsiConsole.Markup("[darkred]You exit the game. Thank you ![/]");
                         break;
                     default:

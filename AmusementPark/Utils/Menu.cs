@@ -23,8 +23,20 @@ namespace AmusementPark.Utils
                     "2.Place anything on your park",
                     "3.Remove a building from your park",
                     "4.Buy some new building for your park",
-                    "5.Exit"
+                    "5.Save the game",
+                    "6.Exit"
                 }));
+        }
+
+        public static string NewOrSaveGame()
+        {
+            return AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .AddChoices(new[]
+                {
+                    "1.New game",
+                    "2.Load a game",
+                }));
+
         }
     }
 }

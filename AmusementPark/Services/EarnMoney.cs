@@ -9,12 +9,25 @@ namespace AmusementPark.Services
 {
     public static class EarnMoney
     {
+        /// <summary>
+        /// create an private object to secure the acces 
+        /// </summary>
         private static readonly object _lock = new();
+
+        /// <summary>
+        /// calculate the money earn by the park by user entries
+        /// </summary>
+        /// <param name="park">The park of the user </param>
+        /// <returns>A <see cref="double"/>The money make by the user entries</returns>
         public static double EarnMoneyByVisitorEntry(Park park)
         {
             return park.VisitorsEntry * 25d * (park.PlacedBuilding.Count);
         }
 
+        /// <summary>
+        /// method to calculate money and visitors in back 
+        /// </summary>
+        /// <param name="park">The park of the user </param>
         public static void GenerateMoneyAndVisitors(Park park)
         {
                         lock (_lock)
@@ -34,6 +47,12 @@ namespace AmusementPark.Services
                             park.Budget -= maintenanceTotal;
                         }
         }
+       /// <summary>
+       /// Retrieves a shared synchronization object used for thread-safe operations.
+       /// </summary>
+       /// <remarks>This method returns a static object intended for use as a lock in multithreaded
+       /// scenarios. Ensure proper usage of the lock to avoid deadlocks or race conditions.</remarks>
+       /// <returns>The synchronization object that can be used to coordinate access to shared resources.</returns>
         public static object GetLock() => _lock;
     }
 }

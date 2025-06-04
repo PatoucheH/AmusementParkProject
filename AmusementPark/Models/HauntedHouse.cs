@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Models
 {
+    /// <summary>
+    /// This class inherits from attractions to create a HauntedHouse class with same properties
+    /// </summary>
     public class HauntedHouse : Attractions
     {
         public override string Name { get; set; }

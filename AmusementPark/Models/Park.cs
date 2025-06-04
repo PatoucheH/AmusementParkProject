@@ -3,11 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 
 namespace AmusementPark.Models
 {
+    /// <summary>
+    /// Main class which manages all the parks with all his methods
+    /// </summary>
     public class Park
     {
         public string ParkName { get; set; }
@@ -26,10 +31,38 @@ namespace AmusementPark.Models
             {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" }
         };
 
+        // Serialisation for the BDD 
+        public string InventoryBuildingsJson => JsonSerializer.Serialize(InventoryBuildings, JsonOptions);
+        public string PlacedBuildingJson => JsonSerializer.Serialize(PlacedBuilding, JsonOptions);
+
+        public void LoadFromJson(string inventoryJson, string placedJson)
+        {
+            InventoryBuildings = JsonSerializer.Deserialize<List<IBuilding>>(inventoryJson, JsonOptions) ?? new List<IBuilding>();
+            PlacedBuilding = JsonSerializer.Deserialize<List<IBuilding>>(placedJson, JsonOptions) ?? new List<IBuilding>();
+        }
+
+        private static JsonSerializerOptions JsonOptions => new()
+        {
+            WriteIndented = false,
+            PropertyNameCaseInsensitive = true,
+            Converters = { new BuildingJsonConverter() } // nécessaire pour désérialiser IBuilding
+        };
+
+        //Constructor
         public Park(string name)
         {
             ParkName = name;
         }
+
+        /// <summary>
+        /// Displays a visual representation of the park, including a grid layout, statistics, and a summary.
+        /// </summary>
+        /// <remarks>The returned grid includes the following components: <list type="bullet"> <item>A
+        /// table representing the park's layout, with rows and columns labeled for easy navigation.</item> <item>A bar
+        /// chart displaying key statistics such as budget, current visitors, and total visitors.</item> <item>A title
+        /// rule indicating the park's name.</item> </list> This method is useful for generating a structured and
+        /// visually appealing overview of the park's state.</remarks>
+        /// <returns>A <see cref="Grid"/> object containing the park's layout, visitor statistics, and budget information.</returns>
          public Grid DisplayPark()
         {
             var grid = new Grid();
@@ -69,16 +102,30 @@ namespace AmusementPark.Models
             return grid;
         }
 
+        /// <summary>
+        /// Displays the list of buildings in the inventory, including their names and descriptions.
+        /// </summary>
+        /// <remarks>Each building in the inventory is displayed with its name in blue. If a building has
+        /// a description,  it is displayed in 	dodgerblue. This method outputs the inventory details to the console using
+        /// ANSI markup.</remarks>
         public void DisplayInventory()
         {
             AnsiConsole.MarkupLine("[navy]Your inventory : [/]");
             foreach (var building in InventoryBuildings)
             {
                 AnsiConsole.MarkupLine($"[blue]{building.Name}[/]");
-                if(building.Description is not null) AnsiConsole.MarkupLine($"[yellow]{building.Description}[/]");
+                if(building.Description is not null) AnsiConsole.MarkupLine($"[dodgerblue1]{building.Description}[/]");
             }
         }
 
+        /// <summary>
+        /// Allows the user to purchase one or more buildings for their park by selecting from a predefined list of
+        /// building types.
+        /// </summary>
+        /// <remarks>This method prompts the user to choose building types from a list and specify names
+        /// for the buildings. The selected buildings are added to the park's inventory, and their prices are deducted
+        /// from the budget. If an invalid building type is selected, an exception is thrown.</remarks>
+        /// <exception cref="Exception">Thrown if an unknown building type is selected.</exception>
         public void BuySomeBuilding()
         {
             List<string> buildingChoose = AnsiConsole.Prompt(new MultiSelectionPrompt<string>()
@@ -98,7 +145,7 @@ namespace AmusementPark.Models
 
                 while (string.IsNullOrEmpty(chooseName))
                 {
-                    chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [red]remove[/] in your park : "));
+                    chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you [green]bought[/] for your park : "));
                 }
                 IBuilding buildingBuy = building switch
                 {
@@ -117,6 +164,13 @@ namespace AmusementPark.Models
         }
 
 
+        /// <summary>
+        /// Places a building from the inventory onto the park grid.
+        /// </summary>
+        /// <remarks>This method allows the user to select a building from their inventory and place it at
+        /// a specified position on the park grid. The position must be unoccupied for the placement to succeed. If the
+        /// inventory is empty, the method will notify the user and terminate. If the selected position is already
+        /// occupied, the user will be prompted to either retry or cancel the operation.</remarks>
         public void PlaceSomeBuilding()
         {
             if (InventoryBuildings.Count <= 0 )
@@ -162,7 +216,14 @@ namespace AmusementPark.Models
         }
 
 
-
+        /// <summary>
+        /// Removes a building from the park based on the user's input.
+        /// </summary>
+        /// <remarks>This method prompts the user to select a building to remove from the park. If the
+        /// park is empty,  a message is displayed, and the method exits. The user is presented with a list of placed
+        /// buildings  and must enter the name of the building to remove. Once a valid building name is provided, the
+        /// building  is removed from the park grid, added back to the inventory, and a confirmation message is
+        /// displayed.</remarks>
         public void RemoveSomeBuilding()
         {
             if(PlacedBuilding.Count <= 0)

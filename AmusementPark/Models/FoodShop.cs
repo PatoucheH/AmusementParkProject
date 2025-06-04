@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Models
 {
+    /// <summary>
+    /// This class inherits from Shops to create a FoodShop class with same properties
+    /// </summary>
     public class FoodShop :Shops
     {
         public override string Name { get; set; }
@@ -14,6 +17,7 @@ namespace AmusementPark.Models
         public Position? Ordinal { get; set; }
         public override double MaintenancePrice {get; init;} = 100;
         public override string? Description { get; init; } = "Some food if you're hungry not angry.";
+        
         
         public FoodShop(string name)
         {

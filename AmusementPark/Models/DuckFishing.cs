@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Models
 {
+    /// <summary>
+    /// This class inherits from attractions to create a DuckFishing class with same properties
+    /// </summary>
         internal class DuckFishing :Attractions
     {
         public override string Name { get; set; }

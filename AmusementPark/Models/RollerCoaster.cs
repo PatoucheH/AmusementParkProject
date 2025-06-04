@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Models
 {
+    /// <summary>
+    /// This class inherits from attractions to create a RollerCoaster class with same properties
+    /// </summary>
     public class RollerCoaster : Attractions
     {
         public override string Name { get; set; }
-        public override double Price { get; init; } = 50_000;
+        public override double Price { get; init; } = 40_000;
         public override string? Emoji { get; init; } = ":roller_coaster:";
         public override string? Type { get; init; } = "Thrill";
         public Position? Ordinal { get; set; }

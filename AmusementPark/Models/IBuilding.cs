@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Models
 {
+    /// <summary>
+    /// This is the base interface from which all buildings, such as attractions and shops, inherit.
+    /// </summary>
     public interface IBuilding
     {
         public string Name { get; set; }

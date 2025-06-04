@@ -32,11 +32,28 @@ namespace AmusementPark.Models
         }
 
         public void DisplayPark()
-        {
+        {   
             var table = new Table().Centered();
             table.Border = TableBorder.Rounded;
             table.ShowRowSeparators();
-            int timeBewteenSpawn = 0;
+            table.AddColumn("Y/X");
+            table.AddColumn("1");
+            table.AddColumn("2");
+            table.AddColumn("3");
+            table.AddColumn("4");
+            table.AddColumn("5");
+
+            var barChart = new BarChart()
+                .Width(50)
+                .AddItem("Budget", Budget, Color.Green)
+                .AddItem("Visitors in the park", VisitorsEntry - VisitorsOut, Color.Teal);
+
+            int timeBewteenSpawn = 1000;
+            var grid = new Grid();
+            grid.AddRow(table);
+            grid.AddEmptyRow();
+            grid.AddRow(barChart);
+
             AnsiConsole.Write(new Rule("[teal] YOUR PARK [/]"));
             AnsiConsole.Live(table)
                 .AutoClear(false)
@@ -44,12 +61,7 @@ namespace AmusementPark.Models
                 .Cropping(VerticalOverflowCropping.Top)
                 .Start(ctx =>
                 {
-                    table.AddColumn("Y/X");
-                    table.AddColumn("1");
-                    table.AddColumn("2");
-                    table.AddColumn("3");
-                    table.AddColumn("4");
-                    table.AddColumn("5");
+                    
                     table.AddRow("1", GridPark[0, 0], GridPark[0, 1], GridPark[0, 2], GridPark[0, 3], GridPark[0, 4]);
                     ctx.Refresh();
                     Thread.Sleep(timeBewteenSpawn);

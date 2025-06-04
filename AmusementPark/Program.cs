@@ -28,18 +28,23 @@ namespace AmusementPark
             Console.Clear();
             AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
             YourPark.DisplayPark();
-
+            EarnMoney.GenerateMoney(YourPark);
             string choice = Menu.DisplayMenu().Substring(0,1);
 
             
 
 
-            while (choice != "7")
+            while (choice != "5")
             {
 
                 Console.Clear();
                 AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
                 YourPark.DisplayPark();
+                lock (EarnMoney.GetLock())
+                {
+                    AnsiConsole.MarkupLine($"[green]Budget actual : {YourPark.Budget}[/]");
+                    AnsiConsole.MarkupLine($"[blue]Visitors In the park : {YourPark.VisitorsEntry - YourPark.VisitorsOut}[/]");
+                }
                 
 
                 if (YourPark.Budget < -5000)
@@ -61,7 +66,7 @@ namespace AmusementPark
                     case "4":
                         YourPark.BuySomeBuilding();
                         break;
-                    case "7":
+                    case "5":
                         AnsiConsole.Markup("[darkred]You exit the game. Thank you ![/]");
                         break;
                     default:

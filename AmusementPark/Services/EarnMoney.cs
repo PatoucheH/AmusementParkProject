@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Services
 {
-    public class EarnMoney
+    public static class EarnMoney
     {
         private static readonly object _lock = new();
         public static double EarnMoneyByVisitorEntry(Park park)
@@ -33,7 +33,6 @@ namespace AmusementPark.Services
                             double moneyEarned = EarnMoney.EarnMoneyByVisitorEntry(park);
                             park.Budget += moneyEarned;
                             park.Budget -= maintenanceTotal;
-
                         }
                         await Task.Delay(5_000);
                     }

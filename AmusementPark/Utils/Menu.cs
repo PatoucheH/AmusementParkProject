@@ -19,7 +19,7 @@ namespace AmusementPark.Utils
                     "2.Place anything on your park",
                     "3.Remove a building from your park",
                     "4.Buy some new building for your park",
-                    "7.Exit"
+                    "5.Exit"
                 }));
         }
     }

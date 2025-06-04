@@ -1,4 +1,6 @@
-﻿using Spectre.Console.Testing;
+﻿using AmusementPark.Models;
+using Spectre.Console;
+using Spectre.Console.Testing;
 
 namespace Test_AmusementPark;
 
@@ -36,6 +38,12 @@ public class UnitTest1
 
         console.Input.PushKey(ConsoleKey.Enter);
 
-        
+
+
+        var park = new Park("jojo");
+
+        var recorder = new Recorder(AnsiConsole.Record());
+        park.DisplayInventory();
+        var output = recorder.Output;
     }
 }

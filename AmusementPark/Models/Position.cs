@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Models
 {
+    /// <summary>
+    /// Structs to get the position of each buiulding in the park's map
+    /// </summary>
     public struct Position
     {
         public int X; public int Y;

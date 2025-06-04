@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Models
 {
+    /// <summary>
+    /// This class inherits from shops to create a GiftShop class with same properties
+    /// </summary>
     public class GiftShop : Shops
     {
         public override string Name { get; set; }

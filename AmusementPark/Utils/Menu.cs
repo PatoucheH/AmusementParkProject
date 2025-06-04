@@ -9,6 +9,10 @@ namespace AmusementPark.Utils
 {
     internal class Menu
     {
+        /// <summary>
+        /// A method with the prompt to display to the user to let him choice what to do 
+        /// </summary>
+        /// <returns>The menu to display to the user</returns>
         public static string DisplayMenu()
         {
             return AnsiConsole.Prompt(new SelectionPrompt<string>()

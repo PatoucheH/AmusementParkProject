@@ -30,10 +30,13 @@ namespace AmusementPark.Models
         {
             ParkName = name;
         }
+         public Grid DisplayPark()
+        {
+            var grid = new Grid();
+            grid.AddColumn();
+            var rule = new Rule("[teal]YOUR PARK[/]");
 
-        public void DisplayPark()
-        {   
-            var table = new Table().Centered();
+            var table = new Table();
             table.Border = TableBorder.Rounded;
             table.ShowRowSeparators();
             table.AddColumn("Y/X");
@@ -43,41 +46,27 @@ namespace AmusementPark.Models
             table.AddColumn("4");
             table.AddColumn("5");
 
+            for (int i = 0; i < 5; i++)
+            {
+                var row = new List<string> { (i + 1).ToString() };
+                for (int j = 0; j < 5; j++)
+                    row.Add(GridPark[i, j]);
+                table.AddRow(row.ToArray());
+            }
+
             var barChart = new BarChart()
                 .Width(50)
+                .Label("[lime bold underline] Your statistics[/]")
+                .CenterLabel()
                 .AddItem("Budget", Budget, Color.Green)
-                .AddItem("Visitors in the park", VisitorsEntry - VisitorsOut, Color.Teal);
+                .AddItem("Visitors in the park", VisitorsEntry - VisitorsOut, Color.Teal)
+                .AddItem("Total visitors", TotalVisitors, Color.Lime);
 
-            int timeBewteenSpawn = 1000;
-            var grid = new Grid();
+            grid.AddRow(rule);
             grid.AddRow(table);
             grid.AddEmptyRow();
             grid.AddRow(barChart);
-
-            AnsiConsole.Write(new Rule("[teal] YOUR PARK [/]"));
-            AnsiConsole.Live(table)
-                .AutoClear(false)
-                .Overflow(VerticalOverflow.Ellipsis)
-                .Cropping(VerticalOverflowCropping.Top)
-                .Start(ctx =>
-                {
-                    
-                    table.AddRow("1", GridPark[0, 0], GridPark[0, 1], GridPark[0, 2], GridPark[0, 3], GridPark[0, 4]);
-                    ctx.Refresh();
-                    Thread.Sleep(timeBewteenSpawn);
-                    table.AddRow("2", GridPark[1, 0], GridPark[1, 1], GridPark[1, 2], GridPark[1, 3], GridPark[1, 4]);
-                    ctx.Refresh();
-                    Thread.Sleep(timeBewteenSpawn);
-                    table.AddRow("3", GridPark[2, 0], GridPark[2, 1], GridPark[2, 2], GridPark[2, 3], GridPark[2, 4]);
-                    ctx.Refresh();
-                    Thread.Sleep(timeBewteenSpawn);
-                    table.AddRow("4", GridPark[3, 0], GridPark[3, 1], GridPark[3, 2], GridPark[3, 3], GridPark[3, 4]);
-                    ctx.Refresh();
-                    Thread.Sleep(timeBewteenSpawn);
-                    table.AddRow("5", GridPark[4, 0], GridPark[4, 1], GridPark[4, 2], GridPark[4, 3], GridPark[4, 4]);
-                    ctx.Refresh();
-                    Thread.Sleep(timeBewteenSpawn);
-                });
+            return grid;
         }
 
         public void DisplayInventory()
@@ -105,14 +94,19 @@ namespace AmusementPark.Models
 
             foreach (var building in buildingChoose)
             {
-                string nameChoose = AnsiConsole.Ask<string>($"Which name do you want for your {building} : ");
+                string chooseName = string.Empty;
+
+                while (string.IsNullOrEmpty(chooseName))
+                {
+                    chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [red]remove[/] in your park : "));
+                }
                 IBuilding buildingBuy = building switch
                 {
-                    "RollerCoaster" => new RollerCoaster(nameChoose),
-                    "HauntedHouse" => new HauntedHouse(nameChoose),
-                    "GiftShop" => new GiftShop(nameChoose),
-                    "FoodShop" => new FoodShop(nameChoose),
-                    "DuckFishing" => new DuckFishing(nameChoose),
+                    "RollerCoaster" => new RollerCoaster(chooseName),
+                    "HauntedHouse" => new HauntedHouse(chooseName),
+                    "GiftShop" => new GiftShop(chooseName),
+                    "FoodShop" => new FoodShop(chooseName),
+                    "DuckFishing" => new DuckFishing(chooseName),
                     _ => throw new Exception("Unknown Type")
                 };
 
@@ -125,6 +119,11 @@ namespace AmusementPark.Models
 
         public void PlaceSomeBuilding()
         {
+            if (InventoryBuildings.Count <= 0 )
+            {
+                AnsiConsole.MarkupLine("[red]Your inventory is empty please buy some buildings before ![/]");
+                return;
+            }
             DisplayInventory();
             string chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [green]place[/] in your park : "));
             while(!InventoryBuildings.Any(build => build.Name == chooseName))
@@ -166,12 +165,22 @@ namespace AmusementPark.Models
 
         public void RemoveSomeBuilding()
         {
+            if(PlacedBuilding.Count <= 0)
+            {
+                AnsiConsole.MarkupLine("[red]Your parc is empty please place some buildings before ! [/]");
+                return;
+            }
             AnsiConsole.MarkupLine("[blue] Your building place : [/]");
             foreach (var building in PlacedBuilding)
             {
                 AnsiConsole.MarkupLine($"{building.Name}");
             }
-            string chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [red]remove[/] in your park : "));
+            string chooseName = string.Empty;
+
+            while(!PlacedBuilding.Any(b => b.Name == chooseName) || string.IsNullOrEmpty(chooseName))
+            {
+                chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [red]remove[/] in your park : "));
+            }
 
             IBuilding chooseBuilding = PlacedBuilding.FirstOrDefault(b => b.Name == chooseName);
             Position point = chooseBuilding.Ordinal;
@@ -183,3 +192,4 @@ namespace AmusementPark.Models
         }
     }
 }
+ 

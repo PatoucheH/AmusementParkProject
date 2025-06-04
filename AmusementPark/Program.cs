@@ -27,25 +27,33 @@ namespace AmusementPark
 
             Console.Clear();
             AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
-            YourPark.DisplayPark();
-            EarnMoney.GenerateMoney(YourPark);
-            string choice = Menu.DisplayMenu().Substring(0,1);
+
+            bool inMenu = false;
+            var cancelToken = new CancellationTokenSource();
+
+            _= Task.Run(async () =>
+                {
+                    while (true)
+                    {
+                            EarnMoney.GenerateMoneyAndVisitors(YourPark);
+                        if (!inMenu)
+                        {
+                            Console.Clear();
+                            AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
+
+                            AnsiConsole.Write(YourPark.DisplayPark());
+                        }
+                        await Task.Delay(5_000);
+                    }
+                });
+            string choice = string.Empty;
 
             
 
 
             while (choice != "5")
             {
-
-                Console.Clear();
-                AnsiConsole.Write(new FigletText(Name).Centered().Color(Color.Lime));
-                YourPark.DisplayPark();
-                lock (EarnMoney.GetLock())
-                {
-                    AnsiConsole.MarkupLine($"[green]Budget actual : {YourPark.Budget}[/]");
-                    AnsiConsole.MarkupLine($"[blue]Visitors In the park : {YourPark.VisitorsEntry - YourPark.VisitorsOut}[/]");
-                }
-                
+                choice = Menu.DisplayMenu().Substring(0, 1);
 
                 if (YourPark.Budget < -5000)
                 {
@@ -58,13 +66,19 @@ namespace AmusementPark
                         YourPark.DisplayInventory();
                         break;
                     case "2":
+                        inMenu = true;
                         YourPark.PlaceSomeBuilding();
+                        inMenu = false;
                         break;
                     case "3":
+                        inMenu = true;
                         YourPark.RemoveSomeBuilding();
+                        inMenu = false;
                         break;
                     case "4":
+                        inMenu = true;
                         YourPark.BuySomeBuilding();
+                        inMenu = false;
                         break;
                     case "5":
                         AnsiConsole.Markup("[darkred]You exit the game. Thank you ![/]");
@@ -74,7 +88,6 @@ namespace AmusementPark
                         break;
                 }
 
-                choice = Menu.DisplayMenu().Substring(0, 1);
             }
 
             

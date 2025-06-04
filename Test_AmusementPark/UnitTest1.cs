@@ -1,9 +1,33 @@
-﻿using Spectre.Console.Testing;
+﻿using AmusementPark.Models;
+using Spectre.Console.Testing;
 
 namespace Test_AmusementPark;
 
 public class UnitTest1
 {
+
+    [Fact]
+
+    public void Test_BuySomeBuilding()
+    {
+        Park YourPark = new Park("jojo");
+
+        YourPark.BuySomeBuilding();
+
+        TestConsole console = new();
+        console.Interactive();
+
+        console.Input.PushKey(ConsoleKey.Spacebar);
+        console.Input.PushKey(ConsoleKey.Enter);
+
+        console.Input.PushTextWithEnter("eee");
+
+        Assert.Contains(YourPark.InventoryBuildings, b => b is RollerCoaster && b.Name == "eee");
+
+    }
+
+
+
     [Fact]
     public void TestBuySomeBuilding_1_()
     {

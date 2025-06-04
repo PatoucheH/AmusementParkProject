@@ -1,18 +1,41 @@
-﻿namespace Test_AmusementPark;
+﻿using Spectre.Console.Testing;
+
+namespace Test_AmusementPark;
 
 public class UnitTest1
 {
     [Fact]
     public void TestBuySomeBuilding_1_()
     {
-        // Arrange
-        var park = new AmusementPark.Models.Park("jojo");
-        park.BuySomeBuilding();
+        // Given
+        TestConsole console = new();
+        console.Interactive();
 
-        // Act
-        var resultat = calc.Additionner(2, 3);
+        // Your mocked inputs must always end with "Enter" for each prompt!
 
-        // Assert
-        Assert.Equal(5, resultat);
+        console.Input.PushTextWithEnter("martinland");
+
+        console.Input.PushKey(ConsoleKey.DownArrow);
+        console.Input.PushKey(ConsoleKey.DownArrow);
+        console.Input.PushKey(ConsoleKey.DownArrow);
+        console.Input.PushKey(ConsoleKey.Enter);
+
+        console.Input.PushKey(ConsoleKey.DownArrow);
+        console.Input.PushKey(ConsoleKey.Spacebar);
+        console.Input.PushKey(ConsoleKey.DownArrow);
+        console.Input.PushKey(ConsoleKey.DownArrow);
+        console.Input.PushKey(ConsoleKey.Spacebar);
+        console.Input.PushKey(ConsoleKey.DownArrow);
+        console.Input.PushKey(ConsoleKey.Spacebar);
+        console.Input.PushKey(ConsoleKey.Enter);
+
+        console.Input.PushTextWithEnter("martinhouse");
+        console.Input.PushTextWithEnter("martinfood");
+        console.Input.PushTextWithEnter("martincoin");
+
+
+        console.Input.PushKey(ConsoleKey.Enter);
+
+        
     }
 }

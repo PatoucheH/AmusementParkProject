@@ -50,8 +50,6 @@ namespace AmusementPark.Services
        /// <summary>
        /// Retrieves a shared synchronization object used for thread-safe operations.
        /// </summary>
-       /// <remarks>This method returns a static object intended for use as a lock in multithreaded
-       /// scenarios. Ensure proper usage of the lock to avoid deadlocks or race conditions.</remarks>
        /// <returns>The synchronization object that can be used to coordinate access to shared resources.</returns>
         public static object GetLock() => _lock;
     }

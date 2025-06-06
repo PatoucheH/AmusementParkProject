@@ -14,29 +14,53 @@ namespace AmusementPark
     {
         static async Task Main(string[] args)
         {
-            // Create databBase 
-
-            await DataAccess.InitializeDatabaseAsync();
-
             // Make emoji's works on terminal
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            // Title to welcoming in our game
-            AnsiConsole.Write(new FigletText("Welcome to our new manager roller coaster game !").Centered().Color(Color.Teal));
+            // Create Database or initialise it 
+            await DataAccess.InitializeDatabaseAsync();
 
+            // instantie ParkRepository
+            var repository = new ParkRepository();
 
-            // Ask the user to choose his park's name
-                string Name = AnsiConsole.Prompt(new TextPrompt<string>("Choose the name of your park : ")
-                    .Validate((name) => name.Length switch
-                {
-                    < 2 => ValidationResult.Error("[red]Your park name is too low ! [/]"),
-                    > 20 => ValidationResult.Error("[red]Your park name is too long ! [/]"),
-                    _ => ValidationResult.Success(),
-                }));
+            // let user choose if he wants to load a park or create a new one 
+            var choices = new List<string> { "Create a new park" };
+            choices.AddRange(await repository.GetAllParkNamesAsync());
 
+            var choiceGame = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("choose an option :")
+                    .PageSize(10)
+                    .AddChoices(choices));
 
-            // create the park
-            Park YourPark = new Park(Name);
+            // instantie the park
+            Park YourPark;
+
+            // if user choose to create a new one 
+            if (choiceGame == "Create a new park")
+            {
+                string name = AnsiConsole.Prompt(
+                    new TextPrompt<string>("Choose the name of your park :")
+                        .Validate(name =>
+                            name.Length switch
+                            {
+                                < 2 => ValidationResult.Error("[red]Name too short[/]"),
+                                > 20 => ValidationResult.Error("[red]Name too long[/]"),
+                                _ => ValidationResult.Success(),
+                            }));
+
+                YourPark = new Park(name);
+            }
+            // if user choose to load a park
+            else
+            {
+                YourPark = await repository.LoadParkAsync(choiceGame)
+                    ?? throw new Exception("Error when charging the park.");
+            }
+
+            // Create databBase 
+
+            await DataAccess.InitializeDatabaseAsync();
 
             // Clear the console
             Console.Clear();
@@ -98,7 +122,6 @@ namespace AmusementPark
                         break;
                     case "5":
                         inMenu = true;
-                        var repository = new ParkRepository();
                         await repository.SaveParkAsync(YourPark);
                         inMenu = false;
                         break;

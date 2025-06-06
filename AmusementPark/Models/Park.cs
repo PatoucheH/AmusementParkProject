@@ -7,6 +7,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AmusementPark.Services;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace AmusementPark.Models
@@ -16,13 +18,15 @@ namespace AmusementPark.Models
     /// </summary>
     public class Park
     {
+
+        [Key]
+        public int Id { get; set; }
         public string Name { get; set; }
         public double Budget { get; set; } = 50_000;
         public int VisitorsEntry {  get; set; }
         public int VisitorsOut {  get; set; }
         public int TotalVisitors {get; set ;}
-        public List<IBuilding> InventoryBuildings { get; set; } = new();
-        public List<IBuilding> PlacedBuilding { get; set; } = new();
+        [NotMapped]
         public string[,] GridPark { get; set; } =
         {
             {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
@@ -32,27 +36,53 @@ namespace AmusementPark.Models
             {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" }
         };
 
-        // Serialisation for the BDD 
-        public string InventoryBuildingsJson => JsonSerializer.Serialize(InventoryBuildings, JsonOptions);
-        public string PlacedBuildingJson => JsonSerializer.Serialize(PlacedBuilding, JsonOptions);
+        [NotMapped]
+        public List<IBuilding> InventoryBuildings { get; set; } = new();
+        [NotMapped]
+        public List<IBuilding> PlacedBuilding { get; set; } = new();
 
-        public void LoadFromJson(string inventoryJson, string placedJson)
+        // Serialization Db
+
+        public string InventoryBuildingsJson
         {
-            InventoryBuildings = JsonSerializer.Deserialize<List<IBuilding>>(inventoryJson, JsonOptions) ?? new List<IBuilding>();
-            PlacedBuilding = JsonSerializer.Deserialize<List<IBuilding>>(placedJson, JsonOptions) ?? new List<IBuilding>();
+            get => JsonSerializer.Serialize(InventoryBuildings, new JsonSerializerOptions { WriteIndented = false, Converters = { new BuildingJsonConverter() } });
+            set => InventoryBuildings = JsonSerializer.Deserialize<List<IBuilding>>(value, new JsonSerializerOptions { Converters = { new BuildingJsonConverter() } }) ?? new();
         }
 
-        private static JsonSerializerOptions JsonOptions => new()
+        public string PlacedBuildingJson
         {
-            WriteIndented = false,
-            PropertyNameCaseInsensitive = true,
-            Converters = { new BuildingJsonConverter() } 
-        };
+            get => JsonSerializer.Serialize(PlacedBuilding, new JsonSerializerOptions { WriteIndented = false, Converters = { new BuildingJsonConverter() } });
+            set => PlacedBuilding = JsonSerializer.Deserialize<List<IBuilding>>(value, new JsonSerializerOptions { Converters = { new BuildingJsonConverter() } }) ?? new();
+        }
+        //[NotMapped]
+        //public List<IBuilding> PlacedBuildings
+        //{
+        //    get => JsonSerializer.Deserialize<List<IBuilding>>(PlacedBuildingJson, BuildingJsonOptions()) ?? new();
+        //    set => PlacedBuildingJson = JsonSerializer.Serialize(value, BuildingJsonOptions());
+        //}
+        //private static JsonSerializerOptions BuildingJsonOptions()
+        //    => new JsonSerializerOptions
+        //    {
+        //        WriteIndented = false,
+        //        Converters = { new BuildingConverter() },
+        //        PropertyNameCaseInsensitive = true
+        //    };
+
+
+
 
         //Constructor
         public Park(string name)
         {
             Name = name;
+            GridPark = new string[5, 5]
+                {
+                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
+                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
+                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
+                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
+                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"}
+                };
         }
 
         /// <summary>

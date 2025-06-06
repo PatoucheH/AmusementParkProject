@@ -9,7 +9,7 @@ namespace AmusementPark.Models
     /// <summary>
     /// Represents a base class for shops within a building or facility.
     /// </summary>
-    public class Shops : IBuilding
+    public abstract class Shops : IBuilding
     {
         public virtual string Name { get; set; }
         public virtual double Price { get; init; }

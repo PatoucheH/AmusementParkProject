@@ -1,5 +1,4 @@
-﻿
-using AmusementPark.Models;
+﻿using AmusementPark.Models;
 using AmusementPark.Services;
 using AmusementPark.Utils;
 using Microsoft.Data.Sqlite;
@@ -7,6 +6,7 @@ using Spectre.Console;
 using Spectre.Console.Extensions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using AmusementPark.Data;
 
 namespace AmusementPark
 {
@@ -14,6 +14,10 @@ namespace AmusementPark
     {
         static async Task Main(string[] args)
         {
+            // Create databBase 
+
+            await DataAccess.InitializeDatabaseAsync();
+
             // Make emoji's works on terminal
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -34,41 +38,6 @@ namespace AmusementPark
             // create the park
             Park YourPark = new Park(Name);
 
-            //string newOrSaveGame = string.Empty;
-            //while (newOrSaveGame is null || newOrSaveGame != "1" || newOrSaveGame != "2")
-            //{
-            //    newOrSaveGame = Menu.NewOrSaveGame().Substring(0, 1);
-            //}
-
-            //if(newOrSaveGame == "1")
-            //{
-            //    // Ask the user to choose his park's name
-            //    string Name = AnsiConsole.Prompt(new TextPrompt<string>("Choose the name of your park : ")
-            //        .Validate((name) => name.Length switch
-            //    {
-            //        < 2 => ValidationResult.Error("[red]Your park name is too low ! [/]"),
-            //        > 20 => ValidationResult.Error("[red]Your park name is too long ! [/]"),
-            //        _ => ValidationResult.Success(),
-            //    }));
-            //    YourPark = new Park(Name);
-            //}
-            //else if (newOrSaveGame == "2")
-            //{
-                
-            //}
-            //else
-            //{
-            //    // Ask the user to choose his park's name
-            //    string Name = AnsiConsole.Prompt(new TextPrompt<string>("Choose the name of your park : ")
-            //        .Validate((name) => name.Length switch
-            //        {
-            //            < 2 => ValidationResult.Error("[red]Your park name is too low ! [/]"),
-            //            > 20 => ValidationResult.Error("[red]Your park name is too long ! [/]"),
-            //            _ => ValidationResult.Success(),
-            //        }));
-            //    YourPark = new Park(Name);
-            //}
-
             // Clear the console
             Console.Clear();
 
@@ -76,7 +45,7 @@ namespace AmusementPark
             bool inMenu = false;
             var cancelToken = new CancellationTokenSource();
 
-            // create the back loop to generate visitors and money and display each x
+            // create the back loop to generate visitors and money and display each 
             _ = Task.Run(async () =>
                 {
                     while (true)
@@ -128,7 +97,10 @@ namespace AmusementPark
                         inMenu = false;
                         break;
                     case "5":
-                        new ParkRepository("Data Source=park.db").SavePark(YourPark);
+                        inMenu = true;
+                        var repository = new ParkRepository();
+                        await repository.SaveParkAsync(YourPark);
+                        inMenu = false;
                         break;
                     case "6":
                         AnsiConsole.Markup("[darkred]You exit the game. Thank you ![/]");

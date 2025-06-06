@@ -14,9 +14,6 @@ namespace AmusementPark.Services
         /// Allows the user to purchase one or more buildings for their park by selecting from a predefined list of
         /// building types.
         /// </summary>
-        /// <remarks>This method prompts the user to choose building types from a list and specify names
-        /// for the buildings. The selected buildings are added to the park's inventory, and their prices are deducted
-        /// from the budget. If an invalid building type is selected, an exception is thrown.</remarks>
         /// <exception cref="Exception">Thrown if an unknown building type is selected.</exception>
         public static List<(string, string)> BuySomeBuilding()
         {
@@ -47,10 +44,6 @@ namespace AmusementPark.Services
         /// <summary>
         /// Places a building from the inventory onto the park grid.
         /// </summary>
-        /// <remarks>This method allows the user to select a building from their inventory and place it at
-        /// a specified position on the park grid. The position must be unoccupied for the placement to succeed. If the
-        /// inventory is empty, the method will notify the user and terminate. If the selected position is already
-        /// occupied, the user will be prompted to either retry or cancel the operation.</remarks>
         public static void PlaceSomeBuilding(Park park)
         {
             if (park.InventoryBuildings.Count <= 0)
@@ -90,11 +83,6 @@ namespace AmusementPark.Services
         /// <summary>
         /// Removes a building from the park based on the user's input.
         /// </summary>
-        /// <remarks>This method prompts the user to select a building to remove from the park. If the
-        /// park is empty,  a message is displayed, and the method exits. The user is presented with a list of placed
-        /// buildings  and must enter the name of the building to remove. Once a valid building name is provided, the
-        /// building  is removed from the park grid, added back to the inventory, and a confirmation message is
-        /// displayed.</remarks>
         public static void RemoveSomeBuilding(Park park)
         {
             if (park.PlacedBuilding.Count <= 0)

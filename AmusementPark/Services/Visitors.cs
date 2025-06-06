@@ -36,6 +36,14 @@ namespace AmusementPark.Services
             return new Random().Next(park.VisitorInPark);
         }
 
+        public static void CalculateNumberVisitorInAttraction(Park park)
+        {
+            for (int i = 0; i < park.VisitorInPark; i++)
+            {
+                int randomInList = new Random().Next(park.PlacedBuilding.Count);
 
+                park.PlacedBuilding[randomInList].VisitorInAttraction++;
+            }
+        }
     }
 }

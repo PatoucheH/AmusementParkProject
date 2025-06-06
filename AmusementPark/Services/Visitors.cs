@@ -19,14 +19,21 @@ namespace AmusementPark.Services
             return new Random().Next(51) * park.PlacedBuilding.Count;
         }
 
+
+        public static int CalculateNumberVisitorInPark(Park park)
+        {
+            return park.VisitorsEntry - park.VisitorsOut;
+        }
+
+
         /// <summary>
         /// calculate the number of visitors who leaves the park
         /// </summary>
         /// <param name="park">The park use to play with</param>
         /// <returns>The number of visitors who leaves in the park</returns>
-        public static int CalculateNumberVisitorOut(int visitors)
+        public static int CalculateNumberVisitorOut(Park park)
         {
-            return new Random().Next(visitors);
+            return new Random().Next(park.VisitorInPark);
         }
 
 

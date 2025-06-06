@@ -18,5 +18,6 @@ namespace AmusementPark.Models
         public virtual Position Ordinal { get; set; }
         public virtual double MaintenancePrice { get; init; }
         public virtual string? Description { get; init; }
+        public virtual int VisitorInAttraction { get; set; }
     }
 }

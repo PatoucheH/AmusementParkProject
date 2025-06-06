@@ -9,9 +9,6 @@ namespace AmusementPark.Models
     /// <summary>
     /// Represents a base class for attractions within a building or facility.
     /// </summary>
-    /// <remarks>This abstract class provides common properties for attractions, such as name, price, type,
-    /// and description. Derived classes can extend or override these properties to define specific types of
-    /// attractions.</remarks>
     public abstract class Attractions :IBuilding
     {
         public virtual string Name { get; set; }

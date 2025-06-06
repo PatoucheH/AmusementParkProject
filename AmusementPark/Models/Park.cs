@@ -7,6 +7,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AmusementPark.Services;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace AmusementPark.Models
@@ -16,13 +18,15 @@ namespace AmusementPark.Models
     /// </summary>
     public class Park
     {
+
+        [Key]
+        public int Id { get; set; }
         public string Name { get; set; }
         public double Budget { get; set; } = 50_000;
         public int VisitorsEntry {  get; set; }
         public int VisitorsOut {  get; set; }
         public int TotalVisitors {get; set ;}
-        public List<IBuilding> InventoryBuildings { get; set; } = new();
-        public List<IBuilding> PlacedBuilding { get; set; } = new();
+        [NotMapped]
         public string[,] GridPark { get; set; } =
         {
             {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
@@ -32,37 +36,58 @@ namespace AmusementPark.Models
             {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" }
         };
 
-        // Serialisation for the BDD 
-        public string InventoryBuildingsJson => JsonSerializer.Serialize(InventoryBuildings, JsonOptions);
-        public string PlacedBuildingJson => JsonSerializer.Serialize(PlacedBuilding, JsonOptions);
+        [NotMapped]
+        public List<IBuilding> InventoryBuildings { get; set; } = new();
+        [NotMapped]
+        public List<IBuilding> PlacedBuilding { get; set; } = new();
 
-        public void LoadFromJson(string inventoryJson, string placedJson)
+        // Serialization Db
+
+        public string InventoryBuildingsJson
         {
-            InventoryBuildings = JsonSerializer.Deserialize<List<IBuilding>>(inventoryJson, JsonOptions) ?? new List<IBuilding>();
-            PlacedBuilding = JsonSerializer.Deserialize<List<IBuilding>>(placedJson, JsonOptions) ?? new List<IBuilding>();
+            get => JsonSerializer.Serialize(InventoryBuildings, new JsonSerializerOptions { WriteIndented = false, Converters = { new BuildingJsonConverter() } });
+            set => InventoryBuildings = JsonSerializer.Deserialize<List<IBuilding>>(value, new JsonSerializerOptions { Converters = { new BuildingJsonConverter() } }) ?? new();
         }
 
-        private static JsonSerializerOptions JsonOptions => new()
+        public string PlacedBuildingJson
         {
-            WriteIndented = false,
-            PropertyNameCaseInsensitive = true,
-            Converters = { new BuildingJsonConverter() } 
-        };
+            get => JsonSerializer.Serialize(PlacedBuilding, new JsonSerializerOptions { WriteIndented = false, Converters = { new BuildingJsonConverter() } });
+            set => PlacedBuilding = JsonSerializer.Deserialize<List<IBuilding>>(value, new JsonSerializerOptions { Converters = { new BuildingJsonConverter() } }) ?? new();
+        }
+        //[NotMapped]
+        //public List<IBuilding> PlacedBuildings
+        //{
+        //    get => JsonSerializer.Deserialize<List<IBuilding>>(PlacedBuildingJson, BuildingJsonOptions()) ?? new();
+        //    set => PlacedBuildingJson = JsonSerializer.Serialize(value, BuildingJsonOptions());
+        //}
+        //private static JsonSerializerOptions BuildingJsonOptions()
+        //    => new JsonSerializerOptions
+        //    {
+        //        WriteIndented = false,
+        //        Converters = { new BuildingConverter() },
+        //        PropertyNameCaseInsensitive = true
+        //    };
+
+
+
 
         //Constructor
         public Park(string name)
         {
             Name = name;
+            GridPark = new string[5, 5]
+                {
+                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
+                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
+                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
+                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
+                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"}
+                };
         }
 
         /// <summary>
         /// Displays a visual representation of the park, including a grid layout, statistics, and a summary.
         /// </summary>
-        /// <remarks>The returned grid includes the following components: <list type="bullet"> <item>A
-        /// table representing the park's layout, with rows and columns labeled for easy navigation.</item> <item>A bar
-        /// chart displaying key statistics such as budget, current visitors, and total visitors.</item> <item>A title
-        /// rule indicating the park's name.</item> </list> This method is useful for generating a structured and
-        /// visually appealing overview of the park's state.</remarks>
         /// <returns>A <see cref="Grid"/> object containing the park's layout, visitor statistics, and budget information.</returns>
          public Grid DisplayPark()
         {
@@ -104,9 +129,6 @@ namespace AmusementPark.Models
         /// <summary>
         /// Displays the list of buildings in the inventory, including their names and descriptions.
         /// </summary>
-        /// <remarks>Each building in the inventory is displayed with its name in blue. If a building has
-        /// a description,  it is displayed in 	dodgerblue. This method outputs the inventory details to the console using
-        /// ANSI markup.</remarks>
         public void DisplayInventory()
         {
             AnsiConsole.MarkupLine("[navy]Your inventory : [/]");
@@ -120,9 +142,6 @@ namespace AmusementPark.Models
         /// <summary>
         /// Purchases a collection of buildings and adds them to the inventory.
         /// </summary>
-        /// <remarks>Each building is instantiated based on its type and name, added to the inventory, and
-        /// its price  is deducted from the budget. If an unknown building type is provided, an exception is
-        /// thrown.</remarks>
         /// <param name="buildings">A list of tuples where each tuple contains the type and name of a building to purchase. The type must be one
         /// of the predefined building types, such as "RollerCoaster", "HauntedHouse",  "GiftShop", "FoodShop", or
         /// "DuckFishing".</param>
@@ -149,10 +168,6 @@ namespace AmusementPark.Models
         /// <summary>
         /// Attempts to place a building at the specified coordinates within the grid.
         /// </summary>
-        /// <remarks>This method checks whether the specified building exists in the inventory and whether
-        /// the target cell in the grid is unoccupied. If the operation succeeds, the building is removed from the
-        /// inventory, placed in the grid, and added to the list of placed buildings. If the operation fails, the
-        /// <paramref name="message"/> parameter provides details about the failure.</remarks>
         /// <param name="name">The name of the building to place. Must match the name of a building in the inventory.</param>
         /// <param name="x">The X-coordinate of the target cell in the grid. Must be a valid grid position.</param>
         /// <param name="y">The Y-coordinate of the target cell in the grid. Must be a valid grid position.</param>
@@ -185,9 +200,6 @@ namespace AmusementPark.Models
         /// <summary>
         /// Attempts to remove a building with the specified name from the park.
         /// </summary>
-        /// <remarks>This method updates the park's grid to reflect the removal of the building and moves
-        /// the building to the inventory. If the building is not found, no changes are made to the park or
-        /// inventory.</remarks>
         /// <param name="name">The name of the building to remove. Cannot be null or empty.</param>
         /// <param name="message">An output parameter that contains a message describing the result of the operation. If the building is
         /// successfully removed, the message will indicate success. If the building is not found, the message will

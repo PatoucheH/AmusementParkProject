@@ -39,7 +39,8 @@ namespace AmusementPark.Services
                             int visitorsIn = Visitors.CalculateNumberVisitorEntry(park);
 
                             park.VisitorsEntry = visitorsIn;
-                            park.VisitorsOut = Visitors.CalculateNumberVisitorOut(park.VisitorsEntry);
+                            park.VisitorsOut = Visitors.CalculateNumberVisitorOut(park);
+                            park.VisitorInPark += Visitors.CalculateNumberVisitorInPark(park);
                             park.TotalVisitors += visitorsIn;
 
                             double moneyEarned = EarnMoney.EarnMoneyByVisitorEntry(park);

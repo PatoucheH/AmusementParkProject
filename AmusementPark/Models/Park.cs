@@ -25,6 +25,7 @@ namespace AmusementPark.Models
         public double Budget { get; set; } = 50_000;
         public int VisitorsEntry {  get; set; }
         public int VisitorsOut {  get; set; }
+        public int VisitorInPark { get; set; } = 0;
         public int TotalVisitors {get; set ;}
         [NotMapped]
         public string[,] GridPark { get; set; } =
@@ -114,7 +115,7 @@ namespace AmusementPark.Models
                 .Label("[lime bold underline] Your statistics[/]")
                 .CenterLabel()
                 .AddItem("Budget", Budget, Color.Green)
-                .AddItem("Visitors in the park", VisitorsEntry - VisitorsOut, Color.Teal)
+                .AddItem("Visitors in the park", VisitorInPark, Color.Teal)
                 .AddItem("Total visitors", TotalVisitors, Color.Lime);
 
             var grid = new Grid();

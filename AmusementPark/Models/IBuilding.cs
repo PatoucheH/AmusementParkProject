@@ -17,5 +17,6 @@ namespace AmusementPark.Models
         public Position Ordinal { get; set; }
         public double MaintenancePrice { get; init; }
         public string? Description { get; init; }
+        public int VisitorInAttraction { get; set; }
     }
 }

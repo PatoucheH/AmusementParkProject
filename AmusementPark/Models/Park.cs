@@ -55,22 +55,6 @@ namespace AmusementPark.Models
             get => JsonSerializer.Serialize(PlacedBuilding, new JsonSerializerOptions { WriteIndented = false, Converters = { new BuildingJsonConverter() } });
             set => PlacedBuilding = JsonSerializer.Deserialize<List<IBuilding>>(value, new JsonSerializerOptions { Converters = { new BuildingJsonConverter() } }) ?? new();
         }
-        //[NotMapped]
-        //public List<IBuilding> PlacedBuildings
-        //{
-        //    get => JsonSerializer.Deserialize<List<IBuilding>>(PlacedBuildingJson, BuildingJsonOptions()) ?? new();
-        //    set => PlacedBuildingJson = JsonSerializer.Serialize(value, BuildingJsonOptions());
-        //}
-        //private static JsonSerializerOptions BuildingJsonOptions()
-        //    => new JsonSerializerOptions
-        //    {
-        //        WriteIndented = false,
-        //        Converters = { new BuildingConverter() },
-        //        PropertyNameCaseInsensitive = true
-        //    };
-
-
-
 
         //Constructor
         public Park(string name)

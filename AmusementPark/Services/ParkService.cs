@@ -34,7 +34,7 @@ namespace AmusementPark.Services
                 string name = string.Empty;
                 while (string.IsNullOrEmpty(name))
                 {
-                    name = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you [green]bought[/] for your park : "));
+                    name = AnsiConsole.Prompt(new TextPrompt<string>($"Enter the name of the {type} you [green]bought[/] for your park : "));
                 }
                 buildings.Add((type, name));
             }

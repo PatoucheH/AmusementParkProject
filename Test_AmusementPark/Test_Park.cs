@@ -60,18 +60,41 @@ public class Test_Park
     /// Tests the successful placement of a building in the park grid.
     /// </summary>
     [Fact]
-    public void Test_Placement_Success_5_4()
+    public void Test_Placement_Success_3_4()
     {
         var park = new Park("rrr");
-        park.InventoryBuildings.Add(new FoodShop("eee"));
+        park.InventoryBuildings.Add(new GiftShop("eee"));
 
-        var result = park.TryPlaceBuilding("rrr", 5, 4, out string message);
+        var result = park.TryPlaceBuilding("eee", 3, 4, out string message);
 
         Assert.True(result);
-        Assert.Contains(park.PlacedBuilding, b => b.Name == "rrr");
-        Assert.DoesNotContain(park.InventoryBuildings, b => b.Name == "rrr");
-        Assert.Equal(":roller_coaster:", park.GridPark[5, 4]);
+        Assert.Contains(park.PlacedBuilding, b => b.Name == "eee");
+        Assert.DoesNotContain(park.InventoryBuildings, b => b.Name == "eee");
+        Assert.Equal(":wrapped_gift:", park.GridPark[2, 3]);
     }
 
 
+
+    [Fact]
+    public void Test_Remove_Success()
+    {
+        var park = new Park("rrr");
+        park.PlacedBuilding.Add(new FoodShop("eee"));
+
+        var result = park.TryRemoveBuilding("eee", out string message);
+
+        Assert.True(result);
+        Assert.Contains(park.InventoryBuildings, b => b.Name == "eee");
+        Assert.DoesNotContain(park.PlacedBuilding, b => b.Name == "eee");  
+    }
+
+    [Fact]
+    public void Test_Remove_Echec()
+    {
+        var park = new Park("rrr");
+
+        var result = park.TryRemoveBuilding("eee", out string message);
+
+        Assert.False(result);
+    }
 }

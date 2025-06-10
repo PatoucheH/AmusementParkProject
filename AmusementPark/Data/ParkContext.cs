@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO; 
 using AmusementPark.Models;
 using Microsoft.EntityFrameworkCore;
-
-
 namespace AmusementPark.Data
 {
     internal class ParkContext : DbContext
@@ -31,7 +30,38 @@ namespace AmusementPark.Data
                 .Ignore(p => p.InventoryBuildings)
                 .Ignore(p => p.PlacedBuilding)
                 .Ignore(p => p.GridPark);
-                
+
+            modelBuilder.Entity<RollerCoaster>(entity =>
+            {
+                entity.HasKey(e => e.Name); 
+                entity.OwnsOne(x => x.Ordinal);
+            });
+
+            modelBuilder.Entity<HauntedHouse>(entity =>
+            {
+                entity.HasKey(e => e.Name);
+                entity.OwnsOne(x => x.Ordinal);
+            });
+
+            modelBuilder.Entity<DuckFishing>(entity =>
+            {
+                entity.HasKey(e => e.Name);
+                entity.OwnsOne(x => x.Ordinal);
+            });
+
+            modelBuilder.Entity<GiftShop>(entity =>
+            {
+                entity.HasKey(e => e.Name);
+                entity.OwnsOne(x => x.Ordinal);
+            });
+
+            modelBuilder.Entity<FoodShop>(entity =>
+            {
+                entity.HasKey(e => e.Name);
+                entity.OwnsOne(x => x.Ordinal);
+            });
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

@@ -8,6 +8,9 @@ using Spectre.Console.Extensions;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using NAudio.Wave;
+using System.Threading;
+
 
 namespace AmusementPark
 {
@@ -17,6 +20,12 @@ namespace AmusementPark
         {
             // Make emoji's works on terminal
             Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+
+            // Music
+            Thread musicThread = new Thread(PlayMusic.PlaysMusic);
+            musicThread.IsBackground = true;
+            musicThread.Start();
 
             // Create Database or initialise it if it not exists
             await DataAccess.InitializeDatabaseAsync();

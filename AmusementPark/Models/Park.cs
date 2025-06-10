@@ -28,14 +28,15 @@ namespace AmusementPark.Models
         public int VisitorInPark { get; set; } = 0;
         public int TotalVisitors {get; set ;}
         [NotMapped]
-        public string[,] GridPark { get; set; } =
-        {
-            {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-            {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-            {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-            {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-            {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" }
-        };
+        public string[,] GridPark { get; set; } 
+        //    =
+        //{
+        //    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
+        //    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
+        //    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
+        //    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
+        //    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" }
+        //};
 
         [NotMapped]
         public List<IBuilding> InventoryBuildings { get; set; } = new();

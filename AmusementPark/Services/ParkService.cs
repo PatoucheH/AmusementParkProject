@@ -109,5 +109,19 @@ namespace AmusementPark.Services
             else
                 AnsiConsole.MarkupLine($"[red]{message}[/]");
         }
+
+
+        public static void DisplayPopularityAttraction(Park park)
+        {
+            foreach (IBuilding attraction in park.PlacedBuilding)
+            {
+                double inAttractrion = attraction.VisitorInAttraction;
+                double totalPark = park.TotalVisitors;
+
+                var pourcent =(inAttractrion/totalPark)*100;
+
+                AnsiConsole.MarkupLine($"A total of {inAttractrion} visitors have visited {attraction.Name}");
+            }
+        }
     }
 }

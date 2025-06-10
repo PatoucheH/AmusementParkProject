@@ -45,5 +45,6 @@ namespace AmusementPark.Services
                 park.PlacedBuilding[randomInList].VisitorInAttraction++;
             }
         }
+
     }
 }

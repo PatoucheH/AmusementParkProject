@@ -120,7 +120,7 @@ namespace AmusementPark.Services
 
                 var pourcent =(inAttractrion/totalPark)*100;
 
-                AnsiConsole.MarkupLine($"There are {inAttractrion} visitors in total who visited {attraction.Name}");
+                AnsiConsole.MarkupLine($"A total of {inAttractrion} visitors have visited {attraction.Name}");
             }
         }
     }

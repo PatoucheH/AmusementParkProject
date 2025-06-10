@@ -3,168 +3,203 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using AmusementPark.Services;
+using AmusementPark.Data;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace AmusementPark.Models
 {
+    /// <summary>
+    /// Main class which manages all the parks with all his methods
+    /// </summary>
     public class Park
     {
-        public string ParkName { get; set; }
-        public double Budget { get; set; } = 50_000;
-        List<IBuilding> InventoryBuildings { get; set; } = new();
-        public List<IBuilding> PlacedBuilding { get; set; } = new();
-        string[,] GridPark { get; set; } =
-        {
-            {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-            {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-            {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-            {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-            {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" }
-        };
 
+        [Key]
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public double Budget { get; set; } = 50_000;
+        public int VisitorsEntry {  get; set; }
+        public int VisitorsOut {  get; set; }
+        public int VisitorInPark { get; set; } = 0;
+        public int TotalVisitors {get; set ;}
+        [NotMapped]
+        public string[,] GridPark { get; set; } 
+        [NotMapped]
+        public List<IBuilding> InventoryBuildings { get; set; } = new();
+        [NotMapped]
+        public List<IBuilding> PlacedBuilding { get; set; } = new();
+
+        // Serialization Db
+
+        public string? GridParkJson
+        {
+            get => GridJson.SerializeGrid(GridPark);
+            set => GridPark = GridJson.DeserializeGrid(value) ?? GridJson.GetDefaultGrid();
+        }
+
+
+        public string InventoryBuildingsJson
+        {
+            get => JsonSerializer.Serialize(InventoryBuildings, new JsonSerializerOptions { WriteIndented = false, Converters = { new BuildingJsonConverter() } });
+            set => InventoryBuildings = JsonSerializer.Deserialize<List<IBuilding>>(value, new JsonSerializerOptions { Converters = { new BuildingJsonConverter() } }) ?? new();
+        }
+
+        public string PlacedBuildingJson
+        {
+            get => JsonSerializer.Serialize(PlacedBuilding, new JsonSerializerOptions { WriteIndented = false, Converters = { new BuildingJsonConverter() } });
+            set => PlacedBuilding = JsonSerializer.Deserialize<List<IBuilding>>(value, new JsonSerializerOptions { Converters = { new BuildingJsonConverter() } }) ?? new();
+        }
+
+        //Constructor
         public Park(string name)
         {
-            ParkName = name;
+            Name = name;
+            GridPark = GridJson.GetDefaultGrid();
         }
 
-        public void DisplayPark()
+        /// <summary>
+        /// Displays a visual representation of the park, including a grid layout, statistics, and a summary.
+        /// </summary>
+        /// <returns>A <see cref="Grid"/> object containing the park's layout, visitor statistics, and budget information.</returns>
+         public Grid DisplayPark()
         {
-            var table = new Table().Centered();
+            var rule = new Rule("[teal]YOUR PARK[/]");
+            var table = new Table();
             table.Border = TableBorder.Rounded;
             table.ShowRowSeparators();
-            int timeBewteenSpawn = 0;
-            AnsiConsole.Write(new Rule("[teal] YOUR PARK [/]"));
-            AnsiConsole.Live(table)
-                .AutoClear(false)
-                .Overflow(VerticalOverflow.Ellipsis)
-                .Cropping(VerticalOverflowCropping.Top)
-                .Start(ctx =>
-                {
-                    table.AddColumn("Y/X");
-                    table.AddColumn("1");
-                    table.AddColumn("2");
-                    table.AddColumn("3");
-                    table.AddColumn("4");
-                    table.AddColumn("5");
-                    table.AddRow("1", GridPark[0, 0], GridPark[0, 1], GridPark[0, 2], GridPark[0, 3], GridPark[0, 4]);
-                    ctx.Refresh();
-                    Thread.Sleep(timeBewteenSpawn);
-                    table.AddRow("2", GridPark[1, 0], GridPark[1, 1], GridPark[1, 2], GridPark[1, 3], GridPark[1, 4]);
-                    ctx.Refresh();
-                    Thread.Sleep(timeBewteenSpawn);
-                    table.AddRow("3", GridPark[2, 0], GridPark[2, 1], GridPark[2, 2], GridPark[2, 3], GridPark[2, 4]);
-                    ctx.Refresh();
-                    Thread.Sleep(timeBewteenSpawn);
-                    table.AddRow("4", GridPark[3, 0], GridPark[3, 1], GridPark[3, 2], GridPark[3, 3], GridPark[3, 4]);
-                    ctx.Refresh();
-                    Thread.Sleep(timeBewteenSpawn);
-                    table.AddRow("5", GridPark[4, 0], GridPark[4, 1], GridPark[4, 2], GridPark[4, 3], GridPark[4, 4]);
-                    ctx.Refresh();
-                    Thread.Sleep(timeBewteenSpawn);
-                });
+            table.AddColumn("Y/X");
+            table.AddColumn("1");
+            table.AddColumn("2");
+            table.AddColumn("3");
+            table.AddColumn("4");
+            table.AddColumn("5");
+            for (int i = 0; i < 5; i++)
+            {
+                var row = new List<string> { (i + 1).ToString() };
+                for (int j = 0; j < 5; j++)
+                    row.Add(GridPark[i, j]);
+                table.AddRow(row.ToArray());
+            }
+
+            var barChart = new BarChart()
+                .Width(50)
+                .Label("[lime bold underline] Your statistics[/]")
+                .CenterLabel()
+                .AddItem("Budget", Budget, Color.Green)
+                .AddItem("Visitors in the park", VisitorInPark, Color.Teal)
+                .AddItem("Total visitors", TotalVisitors, Color.Lime);
+
+            var grid = new Grid();
+            grid.AddColumn();
+            grid.AddRow(rule);
+            grid.AddRow(table);
+            grid.AddEmptyRow();
+            grid.AddRow(barChart);
+            return grid;
         }
 
+        /// <summary>
+        /// Displays the list of buildings in the inventory, including their names and descriptions.
+        /// </summary>
         public void DisplayInventory()
         {
             AnsiConsole.MarkupLine("[navy]Your inventory : [/]");
             foreach (var building in InventoryBuildings)
             {
-                AnsiConsole.MarkupLine($"[blue]{building.Name}[/]");
-                if(building.Description is not null) AnsiConsole.MarkupLine($"[yellow]{building.Description}[/]");
+                AnsiConsole.MarkupLine($"[blue]- {building.Name}[/]");
+                if(building.Description is not null) AnsiConsole.MarkupLine($"Desc : [dodgerblue1]{building.Description}[/]");
             }
         }
 
-        public void BuySomeBuilding()
+        /// <summary>
+        /// Purchases a collection of buildings and adds them to the inventory.
+        /// </summary>
+        /// <param name="buildings">A list of tuples where each tuple contains the type and name of a building to purchase. The type must be one
+        /// of the predefined building types, such as "RollerCoaster", "HauntedHouse",  "GiftShop", "FoodShop", or
+        /// "DuckFishing".</param>
+        /// <exception cref="Exception">Thrown if a building type in the <paramref name="buildings"/> list is not recognized.</exception>
+        public void BuyBuilding(List<(string, string)> buildings)
         {
-            List<string> buildingChoose = AnsiConsole.Prompt(new MultiSelectionPrompt<string>()
-                .Title("Choose the type of building you want to buy :")
-                .AddChoices(new[]
-                {
-                    "RollerCoaster",
-                    "HauntedHouse",
-                    "GiftShop",
-                    "FoodShop",
-                    "DuckFishing"
-                }));
-
-            foreach (var building in buildingChoose)
+            foreach (var (type, name) in buildings)
             {
-                string nameChoose = AnsiConsole.Ask<string>($"Which name do you want for your {building} : ");
-                IBuilding buildingBuy = building switch
+                IBuilding buildingBuy = type switch
                 {
-                    "RollerCoaster" => new RollerCoaster(nameChoose),
-                    "HauntedHouse" => new HauntedHouse(nameChoose),
-                    "GiftShop" => new GiftShop(nameChoose),
-                    "FoodShop" => new FoodShop(nameChoose),
-                    "DuckFishing" => new DuckFishing(nameChoose),
+                    "RollerCoaster" => new RollerCoaster(name),
+                    "HauntedHouse" => new HauntedHouse(name),
+                    "GiftShop" => new GiftShop(name),
+                    "FoodShop" => new FoodShop(name),
+                    "DuckFishing" => new DuckFishing(name),
                     _ => throw new Exception("Unknown Type")
                 };
 
                 InventoryBuildings.Add(buildingBuy);
                 Budget -= (double)buildingBuy.Price;
-                AnsiConsole.MarkupLine($"[green]You successfully bought and add your new {buildingBuy.Name} to your inventory[/]\n Your budget : {Budget}");
             }
         }
 
-
-        public void PlaceSomeBuilding()
+        /// <summary>
+        /// Attempts to place a building at the specified coordinates within the grid.
+        /// </summary>
+        /// <param name="name">The name of the building to place. Must match the name of a building in the inventory.</param>
+        /// <param name="x">The X-coordinate of the target cell in the grid. Must be a valid grid position.</param>
+        /// <param name="y">The Y-coordinate of the target cell in the grid. Must be a valid grid position.</param>
+        /// <param name="message">An output parameter that contains a message describing the result of the operation.</param>
+        /// <returns><see langword="true"/> if the building was successfully placed; otherwise, <see langword="false"/>.</returns>
+        public bool TryPlaceBuilding(string name, int x, int y, out string message)
         {
-            DisplayInventory();
-            string chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [green]place[/] in your park : "));
-            while(!InventoryBuildings.Any(build => build.Name == chooseName))
+            message = string.Empty;
+            var building = InventoryBuildings.FirstOrDefault(b => b.Name == name);
+            if (building == null)
             {
-                chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [green]place[/] in your park : "));
+                message = $"Building with name {name} not found.";
+                return false;
             }
-            IBuilding chooseBuilding = InventoryBuildings.FirstOrDefault(b => b.Name == chooseName);
-
-            var x = AnsiConsole.Prompt(new TextPrompt<int>("Choose the X value for your building : ")
-                .AddChoices(new[] { 1, 2, 3, 4, 5 }));
-            var y = AnsiConsole.Prompt(new TextPrompt<int>("Choose the Y value for your building : ")
-                .AddChoices(new[] {1, 2, 3, 4, 5 }));
-
-            Position Point = new(x - 1, y - 1);
-            if (GridPark[Point.X, Point.Y] == ":green_square:")
+            Position point = new(x - 1, y - 1);
+            if (GridPark[point.X, point.Y] != ":green_square:")
             {
-                chooseBuilding.Ordinal = Point;
-
-                GridPark[chooseBuilding.Ordinal.X, chooseBuilding.Ordinal.Y] = chooseBuilding.Emoji;
-                InventoryBuildings.Remove(chooseBuilding);
-                PlacedBuilding.Add(chooseBuilding);
-                AnsiConsole.MarkupLine($"[green]You successfully placed your {chooseBuilding.Name}[/]");
+                message = $"The cell ({x},{y}) is already occupied.";
+                return false;
             }
-            else
-            {
-                AnsiConsole.MarkupLine($"[red]You cannot placed your {chooseBuilding.Name} in this place, there is already something [/]");
-                var confirmation = AnsiConsole.Prompt(new TextPrompt<bool>("Would you continue ? ")
-                        .AddChoice(true)
-                        .AddChoice(false)
-                        .DefaultValue(true)
-                        .WithConverter(choice => choice ? "y" : "n"));
-                if (confirmation) PlaceSomeBuilding();
-                else return;
 
-            }
+            building.Ordinal = point;
+            GridPark[point.X, point.Y] = building.Emoji;
+            InventoryBuildings.Remove(building);
+            PlacedBuilding.Add(building);
+            message = $"Successfully placed {building.Name} at ({x},{y})";
+            return true;
         }
 
-
-
-        public void RemoveSomeBuilding()
+        /// <summary>
+        /// Attempts to remove a building with the specified name from the park.
+        /// </summary>
+        /// <param name="name">The name of the building to remove. Cannot be null or empty.</param>
+        /// <param name="message">An output parameter that contains a message describing the result of the operation. If the building is
+        /// successfully removed, the message will indicate success. If the building is not found, the message will
+        /// indicate the failure reason.</param>
+        /// <returns><see langword="true"/> if the building was successfully removed; otherwise, <see langword="false"/>.</returns>
+        public bool TryRemoveBuilding(string name, out string message)
         {
-            AnsiConsole.MarkupLine("[blue] Your building place : [/]");
-            foreach (var building in PlacedBuilding)
+            message = string.Empty;
+            var building = PlacedBuilding.FirstOrDefault(b => b.Name == name);
+            if (building == null)
             {
-                AnsiConsole.MarkupLine($"{building.Name}");
+                message = $"Building {name} not found in placed buildings.";
+                return false;
             }
-            string chooseName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the building you want to [red]remove[/] in your park : "));
-
-            IBuilding chooseBuilding = PlacedBuilding.FirstOrDefault(b => b.Name == chooseName);
-            Position point = chooseBuilding.Ordinal;
+            Position point = building.Ordinal;
 
             GridPark[point.X, point.Y] = ":green_square:";
-            InventoryBuildings.Add(chooseBuilding);
-            PlacedBuilding.Remove(chooseBuilding);
-            AnsiConsole.MarkupLine($"[green]You successfully removed {chooseBuilding.Name} from your park[/]");
+            PlacedBuilding.Remove(building);
+            InventoryBuildings.Add(building);
+            message = $"Successfully removed {name} from the park.";
+            return true;
         }
     }
 }
+ 

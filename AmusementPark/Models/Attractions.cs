@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Models
 {
+    /// <summary>
+    /// Represents a base class for attractions within a building or facility.
+    /// </summary>
     public abstract class Attractions :IBuilding
     {
         public virtual string Name { get; set; }
@@ -15,5 +18,6 @@ namespace AmusementPark.Models
         public virtual Position Ordinal { get; set; }
         public virtual double MaintenancePrice { get; init; }
         public virtual string? Description { get; init; }
+        public virtual int VisitorInAttraction { get; set; }
     }
 }

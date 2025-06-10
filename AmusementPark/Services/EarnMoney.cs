@@ -7,16 +7,52 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Services
 {
-    public class EarnMoney
+    public static class EarnMoney
     {
-        public static double EarnMoneyByVisitorEntry(int numberVisitor, Park park)
+        /// <summary>
+        /// create an private object to secure the acces 
+        /// </summary>
+        private static readonly object _lock = new();
+
+        /// <summary>
+        /// calculate the money earn by the park by user entries
+        /// </summary>
+        /// <param name="park">The park of the user </param>
+        /// <returns>A <see cref="double"/>The money make by the user entries</returns>
+        public static double EarnMoneyByVisitorEntry(Park park)
         {
-            return numberVisitor * 25d * (park.PlacedBuilding.Count);
+            return park.VisitorsEntry * 5d * (park.PlacedBuilding.Count);
         }
 
-        public static int CalculateNumberVisitor()
+        /// <summary>
+        /// method to calculate money and visitors in back 
+        /// </summary>
+        /// <param name="park">The park of the user </param>
+        public static void GenerateMoneyAndVisitors(Park park)
         {
-            return new Random().Next(251);
+                        lock (_lock)
+                        {
+                            double maintenanceTotal = 0d;
+                            foreach (var building in park.PlacedBuilding)
+                                maintenanceTotal += building.MaintenancePrice;
+
+                            int visitorsIn = Visitors.CalculateNumberVisitorEntry(park);
+
+                            park.VisitorsEntry = visitorsIn;
+                            park.VisitorsOut = Visitors.CalculateNumberVisitorOut(park);
+                            park.VisitorInPark += Visitors.CalculateNumberVisitorInPark(park);
+                            park.TotalVisitors += visitorsIn;
+                            Visitors.CalculateNumberVisitorInAttraction(park);
+
+                            double moneyEarned = EarnMoney.EarnMoneyByVisitorEntry(park);
+                            park.Budget += moneyEarned;
+                            park.Budget -= maintenanceTotal;
+                        }
         }
+       /// <summary>
+       /// Retrieves a shared synchronization object used for thread-safe operations.
+       /// </summary>
+       /// <returns>The synchronization object that can be used to coordinate access to shared resources.</returns>
+        public static object GetLock() => _lock;
     }
 }

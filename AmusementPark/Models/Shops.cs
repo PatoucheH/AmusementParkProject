@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace AmusementPark.Models
 {
-    public class Shops : IBuilding
+    /// <summary>
+    /// Represents a base class for shops within a building or facility.
+    /// </summary>
+    public abstract class Shops : IBuilding
     {
         public virtual string Name { get; set; }
         public virtual double Price { get; init; }
@@ -14,5 +17,6 @@ namespace AmusementPark.Models
         public virtual Position Ordinal { get; set; }
         public virtual double MaintenancePrice { get; init; }
         public virtual string? Description { get; init; }
+        public virtual int VisitorInAttraction { get; set; }
     }
 }

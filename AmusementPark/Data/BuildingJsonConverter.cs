@@ -27,6 +27,7 @@ public class BuildingJsonConverter : JsonConverter<IBuilding>
 
     }
 
+
     public override void Write(Utf8JsonWriter writer, IBuilding value, JsonSerializerOptions options)
     {
         var typeName = value.GetType().Name;

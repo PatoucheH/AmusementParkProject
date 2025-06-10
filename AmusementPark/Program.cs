@@ -1,12 +1,13 @@
-﻿using AmusementPark.Models;
+﻿using AmusementPark.Data;
+using AmusementPark.Models;
 using AmusementPark.Services;
 using AmusementPark.Utils;
 using Microsoft.Data.Sqlite;
 using Spectre.Console;
 using Spectre.Console.Extensions;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using AmusementPark.Data;
 
 namespace AmusementPark
 {
@@ -14,6 +15,29 @@ namespace AmusementPark
     {
         static async Task Main(string[] args)
         {
+
+            var duck = new DuckFishing("Test Duck") { Ordinal = new Position(5, 4) };
+
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                PropertyNameCaseInsensitive = true
+            };
+            options.Converters.Add(new PositionJsonConverter());
+            options.Converters.Add(new BuildingJsonConverter());
+
+            var json = JsonSerializer.Serialize<IBuilding>(duck, options);
+            Console.WriteLine("JSON GÉNÉRÉ :");
+            Console.WriteLine(json);
+
+            // Test désérialisation
+            var rebuilt = JsonSerializer.Deserialize<IBuilding>(json, options);
+            if (rebuilt is DuckFishing df)
+                Console.WriteLine($"✔ Ordinal après lecture : {df.Ordinal?.X}, {df.Ordinal?.Y}");
+
+
+
+
             // Make emoji's works on terminal
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -122,6 +146,7 @@ namespace AmusementPark
                         break;
                     case "5":
                         inMenu = true;
+
                         await repository.SaveParkAsync(YourPark);
                         inMenu = false;
                         break;

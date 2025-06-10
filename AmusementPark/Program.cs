@@ -75,11 +75,13 @@ namespace AmusementPark
                     while (true)
                     {
                         EarnMoney.GenerateMoneyAndVisitors(YourPark);
+                        
                         if (!inMenu)
                         {
                             Console.Clear();
                             AnsiConsole.Write(new FigletText(YourPark.Name).Centered().Color(Color.Lime));
                             AnsiConsole.Write(YourPark.DisplayPark());
+
                         }
                         await Task.Delay(5_000);
                     }
@@ -127,6 +129,10 @@ namespace AmusementPark
                         break;
                     case "6":
                         AnsiConsole.Markup("[darkred]You exit the game. Thank you ![/]");
+                        break;
+                    case "7":
+                        ParkService.DisplayPopularityAttraction(YourPark);
+                        //AnsiConsole.MarkupLine($"{YourPark.PlacedBuilding[0].VisitorInAttraction}");
                         break;
                     default:
                         AnsiConsole.Markup("[red]You entered a wrong input please choose a number in the menu.[/]");

@@ -24,8 +24,8 @@ namespace AmusementPark.Utils
                     "3.Remove a building from your park",
                     "4.Buy some new building for your park",
                     "5.Save the game",
-                    "6.Exit",
-                    "7.Pourcent"
+                    "6.Show visitors by attractions",
+                    "7.Exit",
                 }));
         }
 

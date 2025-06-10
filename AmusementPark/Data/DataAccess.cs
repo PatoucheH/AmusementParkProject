@@ -17,9 +17,9 @@ namespace AmusementPark.Data
             var dbPath = Path.Combine(projectRoot, "Data", "park.db");
 
             if (created)
-                Console.WriteLine($"✅ Database created at: {dbPath}");
+                Console.WriteLine($"Database created at: {dbPath}");
             else
-                Console.WriteLine("✅ Database already exists.");
+                Console.WriteLine("Database already exists.");
         }
 
     }

@@ -79,7 +79,7 @@ namespace AmusementPark
                             AnsiConsole.Write(YourPark.DisplayPark());
 
                         }
-                        await Task.Delay(5_000);
+                        await Task.Delay(2_000);
                     }
                 });
             // initialise the user's choice
@@ -101,6 +101,7 @@ namespace AmusementPark
                 switch (choice)
                 {
                     case "1":
+                        inMenu = true;
                         YourPark.DisplayInventory();
                         break;
                     case "2":

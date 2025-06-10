@@ -21,7 +21,7 @@ namespace AmusementPark.Services
         /// <returns>A <see cref="double"/>The money make by the user entries</returns>
         public static double EarnMoneyByVisitorEntry(Park park)
         {
-            return park.VisitorsEntry * 25d * (park.PlacedBuilding.Count);
+            return park.VisitorsEntry * 5d * (park.PlacedBuilding.Count);
         }
 
         /// <summary>

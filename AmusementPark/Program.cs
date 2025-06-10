@@ -1,12 +1,13 @@
-﻿using AmusementPark.Models;
+﻿using AmusementPark.Data;
+using AmusementPark.Models;
 using AmusementPark.Services;
 using AmusementPark.Utils;
 using Microsoft.Data.Sqlite;
 using Spectre.Console;
 using Spectre.Console.Extensions;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using AmusementPark.Data;
 
 namespace AmusementPark
 {
@@ -67,7 +68,7 @@ namespace AmusementPark
 
             // create var to stop the refresh when we are in a prompt
             bool inMenu = false;
-            var cancelToken = new CancellationTokenSource();
+            //var cancelToken = new CancellationTokenSource();
 
             // create the back loop to generate visitors and money and display each 
             _ = Task.Run(async () =>
@@ -119,11 +120,12 @@ namespace AmusementPark
                         break;
                     case "4":
                         inMenu = true;
-                        YourPark.BuyBuilding(ParkService.BuySomeBuilding());
+                        YourPark.BuyBuilding(ParkService.BuySomeBuilding(YourPark));
                         inMenu = false;
                         break;
                     case "5":
                         inMenu = true;
+                        Console.WriteLine(YourPark.GridParkJson);
                         await repository.SaveParkAsync(YourPark);
                         inMenu = false;
                         break;

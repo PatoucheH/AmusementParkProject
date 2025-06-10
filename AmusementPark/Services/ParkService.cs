@@ -15,7 +15,7 @@ namespace AmusementPark.Services
         /// building types.
         /// </summary>
         /// <exception cref="Exception">Thrown if an unknown building type is selected.</exception>
-        public static List<(string, string)> BuySomeBuilding()
+        public static List<(string, string)> BuySomeBuilding(Park park)
         {
             List<(string type, string name)> buildings = new();
             var choices = AnsiConsole.Prompt(new MultiSelectionPrompt<string>()
@@ -32,9 +32,14 @@ namespace AmusementPark.Services
             foreach (var type in choices)
             {
                 string name = string.Empty;
-                while (string.IsNullOrEmpty(name))
+                while (string.IsNullOrEmpty(name) )
                 {
                     name = AnsiConsole.Prompt(new TextPrompt<string>($"Enter the name of the {type} you [green]bought[/] for your park : "));
+                    if(park.PlacedBuilding.FirstOrDefault(b => b.Name == name) != null || park.InventoryBuildings.FirstOrDefault(b => b.Name == name) != null)
+                    {
+                        AnsiConsole.MarkupLine($"[red]{name} is already taken ! [/]");
+                        name = string.Empty;
+                    }
                 }
                 buildings.Add((type, name));
             }
@@ -93,7 +98,7 @@ namespace AmusementPark.Services
             AnsiConsole.MarkupLine("[blue] Your building place : [/]");
             foreach (var building in park.PlacedBuilding)
             {
-                AnsiConsole.MarkupLine($"- {building.Name}");
+                AnsiConsole.MarkupLine($"- {building.Name}\n\tDesc : {building.Description}");
             }
             string chooseName = string.Empty;
 

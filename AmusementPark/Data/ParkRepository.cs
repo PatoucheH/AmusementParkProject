@@ -25,6 +25,7 @@ namespace AmusementPark.Data
                 existingPark.TotalVisitors = park.TotalVisitors;
                 existingPark.InventoryBuildingsJson = park.InventoryBuildingsJson;
                 existingPark.PlacedBuildingJson = park.PlacedBuildingJson;
+                existingPark.GridParkJson = park.GridParkJson;
             }
             else
             {

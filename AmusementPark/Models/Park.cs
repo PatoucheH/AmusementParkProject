@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AmusementPark.Services;
+using AmusementPark.Data;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
@@ -28,14 +29,6 @@ namespace AmusementPark.Models
         public int TotalVisitors {get; set ;}
         [NotMapped]
         public string[,] GridPark { get; set; }
-        //    =
-        //{
-        //    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-        //    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-        //    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-        //    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" },
-        //    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:" } 
-        //};
 
         [NotMapped]
         public List<IBuilding> InventoryBuildings { get; set; } = new();
@@ -43,6 +36,13 @@ namespace AmusementPark.Models
         public List<IBuilding> PlacedBuilding { get; set; } = new();
 
         // Serialization Db
+
+        public string? GridParkJson
+        {
+            get => GridJson.SerializeGrid(GridPark);
+            set => GridPark = GridJson.DeserializeGrid(value) ?? GridJson.GetDefaultGrid();
+        }
+
 
         public string InventoryBuildingsJson
         {
@@ -60,14 +60,7 @@ namespace AmusementPark.Models
         public Park(string name)
         {
             Name = name;
-            GridPark = new string[5, 5]
-                {
-                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
-                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
-                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
-                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"},
-                    {":green_square:",":green_square:",":green_square:",":green_square:",":green_square:"}
-                };
+            GridPark = GridJson.GetDefaultGrid();
         }
 
         /// <summary>

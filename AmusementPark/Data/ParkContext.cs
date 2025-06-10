@@ -31,6 +31,7 @@ namespace AmusementPark.Data
                 .Ignore(p => p.InventoryBuildings)
                 .Ignore(p => p.PlacedBuilding)
                 .Ignore(p => p.GridPark);
+                
         }
     }
 }

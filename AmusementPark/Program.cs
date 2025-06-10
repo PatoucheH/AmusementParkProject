@@ -15,29 +15,6 @@ namespace AmusementPark
     {
         static async Task Main(string[] args)
         {
-
-            var duck = new DuckFishing("Test Duck") { Ordinal = new Position(5, 4) };
-
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                PropertyNameCaseInsensitive = true
-            };
-            options.Converters.Add(new PositionJsonConverter());
-            options.Converters.Add(new BuildingJsonConverter());
-
-            var json = JsonSerializer.Serialize<IBuilding>(duck, options);
-            Console.WriteLine("JSON GÉNÉRÉ :");
-            Console.WriteLine(json);
-
-            // Test désérialisation
-            var rebuilt = JsonSerializer.Deserialize<IBuilding>(json, options);
-            if (rebuilt is DuckFishing df)
-                Console.WriteLine($"✔ Ordinal après lecture : {df.Ordinal?.X}, {df.Ordinal?.Y}");
-
-
-
-
             // Make emoji's works on terminal
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -91,7 +68,7 @@ namespace AmusementPark
 
             // create var to stop the refresh when we are in a prompt
             bool inMenu = false;
-            var cancelToken = new CancellationTokenSource();
+            //var cancelToken = new CancellationTokenSource();
 
             // create the back loop to generate visitors and money and display each 
             _ = Task.Run(async () =>
@@ -141,12 +118,12 @@ namespace AmusementPark
                         break;
                     case "4":
                         inMenu = true;
-                        YourPark.BuyBuilding(ParkService.BuySomeBuilding());
+                        YourPark.BuyBuilding(ParkService.BuySomeBuilding(YourPark));
                         inMenu = false;
                         break;
                     case "5":
                         inMenu = true;
-
+                        Console.WriteLine(YourPark.GridParkJson);
                         await repository.SaveParkAsync(YourPark);
                         inMenu = false;
                         break;

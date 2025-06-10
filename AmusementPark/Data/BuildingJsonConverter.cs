@@ -12,16 +12,13 @@ public class BuildingJsonConverter : JsonConverter<IBuilding>
 
         var typeName = root.GetProperty("TypeName").GetString();
 
-        var localOptions = new JsonSerializerOptions(options);
-        localOptions.Converters.Add(new PositionJsonConverter());
-
         return typeName switch
         {
-            nameof(GiftShop) => JsonSerializer.Deserialize<GiftShop>(root.GetRawText(), localOptions),
-            nameof(HauntedHouse) => JsonSerializer.Deserialize<HauntedHouse>(root.GetRawText(), localOptions),
-            nameof(RollerCoaster) => JsonSerializer.Deserialize<RollerCoaster>(root.GetRawText(), localOptions),
-            nameof(FoodShop) => JsonSerializer.Deserialize<FoodShop>(root.GetRawText(), localOptions),
-            nameof(DuckFishing) => JsonSerializer.Deserialize<DuckFishing>(root.GetRawText(), localOptions),
+            nameof(GiftShop) => JsonSerializer.Deserialize<GiftShop>(root.GetRawText(), options),
+            nameof(HauntedHouse) => JsonSerializer.Deserialize<HauntedHouse>(root.GetRawText(), options),
+            nameof(RollerCoaster) => JsonSerializer.Deserialize<RollerCoaster>(root.GetRawText(), options),
+            nameof(FoodShop) => JsonSerializer.Deserialize<FoodShop>(root.GetRawText(), options),
+            nameof(DuckFishing) => JsonSerializer.Deserialize<DuckFishing>(root.GetRawText(), options),
             _ => throw new NotSupportedException($"Unsupported type: {typeName}")
         };
 
@@ -32,10 +29,7 @@ public class BuildingJsonConverter : JsonConverter<IBuilding>
     {
         var typeName = value.GetType().Name;
 
-        var localOptions = new JsonSerializerOptions(options);
-        localOptions.Converters.Add(new PositionJsonConverter());
-
-        var json = JsonSerializer.SerializeToElement(value, value.GetType(), localOptions);
+        var json = JsonSerializer.SerializeToElement(value, value.GetType(), options);
         using var doc = JsonDocument.Parse(json.GetRawText());
 
         writer.WriteStartObject();

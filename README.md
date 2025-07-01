@@ -2,20 +2,6 @@
 
 Une application console interactive pour la gestion d'un parc d'attractions, développée en C# avec une interface utilisateur enrichie grâce à Spectre.Console.
 
-## 📋 Table des matières
-
-- [Aperçu](#aperçu)
-- [Fonctionnalités](#fonctionnalités)
-- [Technologies utilisées](#technologies-utilisées)
-- [Prérequis](#prérequis)
-- [Installation](#installation)
-- [Utilisation](#utilisation)
-- [Structure du projet](#structure-du-projet)
-- [Base de données](#base-de-données)
-- [Captures d'écran](#captures-décran)
-- [Contribuer](#contribuer)
-- [Licence](#licence)
-
 ## 🎡 Aperçu
 
 Amusement Park Project est un simulateur de gestion de parc d'attractions en mode console. Construisez et gérez votre parc sur une grille 5x5, placez différentes attractions, surveillez vos finances et attirez des visiteurs pour développer votre empire du divertissement !
